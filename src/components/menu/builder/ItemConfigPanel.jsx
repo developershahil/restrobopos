@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Image as ImageIcon, Upload, Sparkles } from 'lucide-react';
 import { useMenuStore } from '../../../store/useMenuStore';
 import VariantManager from './VariantManager';
 import AddonManager from './AddonManager';
@@ -33,21 +34,46 @@ function DetailsTab({ item }) {
   const [itemCode, setItemCode] = useState(item.itemCode || '');
   const [minQty, setMinQty]     = useState(item.minOrderQty || '1');
   const [maxQty, setMaxQty]     = useState(item.maxOrderQty || '');
+  const [imageUrl, setImageUrl] = useState(item.imageUrl || '');
+  const [swiggyMarkup, setSwiggyMarkup] = useState(item.swiggyMarkup || '0');
+  const [zomatoMarkup, setZomatoMarkup] = useState(item.zomatoMarkup || '0');
 
   const isDirty = [
     desc !== (item.description||''), prep !== (item.prepTime||''), cal !== (item.calories||''),
-    pkg !== (item.packagingCharge||'0'),
-    discount !== (item.discount||'0'), itemCode !== (item.itemCode||''),
+    pkg !== (item.packagingCharge||'0'), discount !== (item.discount||'0'), itemCode !== (item.itemCode||''),
     minQty !== (item.minOrderQty||'1'), maxQty !== (item.maxOrderQty||''),
+    imageUrl !== (item.imageUrl||''), swiggyMarkup !== (item.swiggyMarkup||'0'), zomatoMarkup !== (item.zomatoMarkup||'0')
   ].some(Boolean);
 
-  const save = () => updateItem(item.id, { description: desc, prepTime: prep, calories: cal, packagingCharge: pkg, discount, itemCode, minOrderQty: minQty, maxOrderQty: maxQty });
+  const save = () => updateItem(item.id, { 
+    description: desc, prepTime: prep, calories: cal, packagingCharge: pkg, discount, itemCode, minOrderQty: minQty, maxOrderQty: maxQty,
+    imageUrl, swiggyMarkup, zomatoMarkup
+  });
 
   const SL = ({ children }) => <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 mt-4 first:mt-0">{children}</p>;
 
 
   return (
     <div className="space-y-1">
+      {/* Image Upload */}
+      <div className="mb-4">
+        {imageUrl ? (
+          <div className="relative h-32 rounded-xl overflow-hidden group border border-border">
+            <img src={imageUrl} alt={item.name} className="w-full h-full object-cover" />
+            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <button onClick={() => setImageUrl('')} className="bg-background text-foreground px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-muted">Change Image</button>
+            </div>
+          </div>
+        ) : (
+          <button onClick={() => setImageUrl('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80')} className="w-full h-24 rounded-xl border-2 border-dashed border-border bg-muted/20 hover:bg-muted/50 hover:border-primary/50 transition-colors flex flex-col items-center justify-center gap-1.5 text-muted-foreground group">
+            <div className="w-8 h-8 rounded-full bg-background border border-border flex items-center justify-center group-hover:text-primary group-hover:border-primary/30 transition-colors">
+              <ImageIcon className="w-4 h-4" />
+            </div>
+            <span className="text-[10px] font-bold uppercase tracking-wider">Upload Item Photo</span>
+          </button>
+        )}
+      </div>
+
       {/* Tags */}
       {item.tags?.length > 0 && (
         <div className="flex flex-wrap gap-1 mb-2">
@@ -97,7 +123,26 @@ function DetailsTab({ item }) {
         </div>
       )}
 
-      <SL>Inventory</SL>
+      <SL>Aggregator Pricing & Inventory</SL>
+      <div className="grid grid-cols-2 gap-1.5 mb-1.5">
+        <div className="bg-orange-50 border border-orange-100 rounded-lg px-2 py-1.5 text-center">
+          <p className="text-[10px] font-bold text-orange-700 uppercase tracking-wider">Swiggy Markup</p>
+          <div className="flex items-center justify-center mt-0.5">
+            <input type="number" value={swiggyMarkup} onChange={(e) => setSwiggyMarkup(e.target.value)} placeholder="0"
+              className="w-12 text-sm font-black text-center bg-transparent outline-none text-orange-900" />
+            <span className="text-xs font-bold text-orange-700">%</span>
+          </div>
+        </div>
+        <div className="bg-red-50 border border-red-100 rounded-lg px-2 py-1.5 text-center">
+          <p className="text-[10px] font-bold text-red-700 uppercase tracking-wider">Zomato Markup</p>
+          <div className="flex items-center justify-center mt-0.5">
+            <input type="number" value={zomatoMarkup} onChange={(e) => setZomatoMarkup(e.target.value)} placeholder="0"
+              className="w-12 text-sm font-black text-center bg-transparent outline-none text-red-900" />
+            <span className="text-xs font-bold text-red-700">%</span>
+          </div>
+        </div>
+      </div>
+
       <div className="grid grid-cols-2 gap-1.5">
         <div className="bg-muted/40 rounded-lg px-2 py-1.5 text-center">
           <p className="text-xs text-muted-foreground">Discount</p>
@@ -147,15 +192,35 @@ function DetailsTab({ item }) {
         </div>
       </div>
 
-      <SL>Description</SL>
+      <div className="flex items-center justify-between mb-2 mt-4 first:mt-0">
+        <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Description</p>
+        <button 
+          onClick={() => {
+            setDesc('Generating...');
+            setTimeout(() => {
+              const base = `A delicious and mouth-watering serving of ${item.name}.`;
+              const spice = item.tags?.includes('Spicy') ? ' Perfectly spiced to give a fiery kick.' : '';
+              const best = item.tags?.includes('Bestseller') ? ' One of our most loved and highly recommended dishes!' : '';
+              setDesc(base + spice + best);
+            }, 800);
+          }}
+          className="flex items-center gap-1.5 px-2 py-1 bg-amber-50 text-amber-700 hover:bg-amber-100 rounded text-[10px] font-bold transition-colors"
+        >
+          <Sparkles className="w-3 h-3" /> AI Auto-Write
+        </button>
+      </div>
       <textarea rows={3} value={desc} onChange={(e) => setDesc(e.target.value)} placeholder="Short description..."
         className="w-full bg-background border border-border rounded-lg px-3 py-2 text-xs outline-none focus:border-primary transition-colors resize-none" />
 
-      {isDirty && (
-        <button onClick={save} className="w-full py-1.5 bg-primary text-primary-foreground rounded-lg text-xs font-semibold hover:bg-primary/90 transition-colors">
-          Save Details
+      <div className="sticky bottom-0 pb-2 pt-4 bg-gradient-to-t from-card via-card to-transparent mt-4 -mx-1 px-1">
+        <button 
+          onClick={save} 
+          disabled={!isDirty}
+          className={`w-full py-2 rounded-xl text-xs font-bold transition-all shadow-md ${isDirty ? 'bg-primary text-primary-foreground hover:bg-primary/90 hover:-translate-y-0.5' : 'bg-muted text-muted-foreground opacity-60 cursor-not-allowed shadow-none'}`}
+        >
+          {isDirty ? 'Save Details' : 'All Changes Saved'}
         </button>
-      )}
+      </div>
     </div>
   );
 }

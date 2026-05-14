@@ -20,7 +20,7 @@ export default function MenuHeader() {
         <input
           type="text"
           placeholder="Search..."
-          className="w-48 pl-8 pr-3 py-1.5 rounded-lg border border-border bg-background outline-none focus:border-primary text-xs font-medium transition-colors"
+          className="w-48 pl-8 pr-3 py-2.5 rounded-lg border border-border bg-background outline-none focus:border-primary text-xs font-medium transition-colors"
         />
       </div>
     </div>

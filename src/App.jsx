@@ -11,6 +11,7 @@ import Offers from './pages/Offers';
 import ItemAvailability from './pages/ItemAvailability';
 import StoreSettings from './pages/StoreSettings';
 import GlobalSettings from './pages/GlobalSettings';
+import Notifications from './pages/Notifications';
 import Login from './pages/Login';
 
 // Simple Auth Component
@@ -45,6 +46,7 @@ function App() {
           <Route path="stores" element={<Stores />} />
           <Route path="settings" element={<StoreSettings />} />
           <Route path="global-settings" element={<GlobalSettings />} />
+          <Route path="notifications" element={<Notifications />} />
           <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>

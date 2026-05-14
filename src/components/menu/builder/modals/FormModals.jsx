@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, Search } from 'lucide-react';
 import { useMenuStore } from '../../../../store/useMenuStore';
+import TimingSelector from '../TimingSelector';
 
 // ─── Shared primitives ────────────────────────────────────────────────────────
-export function ModalWrapper({ title, onClose, children, footer }) {
+export function ModalWrapper({ title, onClose, children, footer, maxWidth = 'max-w-sm' }) {
   const overlayRef = useRef();
   useEffect(() => {
     const h = (e) => { if (e.key === 'Escape') onClose(); };
@@ -14,7 +15,7 @@ export function ModalWrapper({ title, onClose, children, footer }) {
   return (
     <div ref={overlayRef} onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-sm mx-4 flex flex-col">
+      <div className={`bg-card border border-border rounded-xl shadow-xl w-full mx-4 flex flex-col ${maxWidth}`}>
         <div className="flex items-center justify-between px-4 py-3 border-b border-border">
           <h3 className="text-sm font-bold text-foreground">{title}</h3>
           <button onClick={onClose} className="p-1 rounded-md hover:bg-muted text-muted-foreground hover:text-foreground transition-colors">
@@ -58,10 +59,17 @@ export function CategoryModal({ initial, onSave, onClose }) {
   const [active, setActive] = useState(initial?.active ?? true);
   const [color, setColor] = useState(initial?.color || '#6366f1');
 
+  const { categoryTiming, setCategoryTiming } = useMenuStore();
+  const initialTiming = initial ? categoryTiming[initial.id] : undefined;
+  const [timing, setTiming] = useState(initialTiming || { alwaysAvailable: true, days: [], startTime: '', endTime: '' });
+
   const handleSave = (e) => {
     e.preventDefault();
     if (!name.trim()) return;
-    onSave({ name: name.trim(), active, color });
+    
+    // Save category
+    const catData = { name: name.trim(), active, color };
+    onSave(catData, timing); // Pass timing to onSave
     onClose();
   };
 
@@ -80,12 +88,16 @@ export function CategoryModal({ initial, onSave, onClose }) {
           ))}
         </div>
       </Field>
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between border-t border-border/50 pt-3">
         <span className="text-sm font-semibold text-foreground">Active</span>
         <label className="relative inline-flex items-center cursor-pointer">
           <input type="checkbox" className="sr-only peer" checked={active} onChange={(e) => setActive(e.target.checked)} />
           <div className="w-8 h-4 bg-muted-foreground/30 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-primary" />
         </label>
+      </div>
+
+      <div className="border-t border-border/50 pt-3 mt-1">
+        <TimingSelector value={timing} onChange={setTiming} />
       </div>
     </ModalWrapper>
   );
@@ -93,7 +105,7 @@ export function CategoryModal({ initial, onSave, onClose }) {
 
 // ─── Item Modal ───────────────────────────────────────────────────────────────
 const ALL_ALLERGENS = ['Gluten','Dairy','Eggs','Nuts','Soy','Seafood','Sesame'];
-const ALL_CHANNELS  = ['Delivery','Takeaway','Dine-in'];
+const ALL_CHANNELS  = ['Swiggy', 'Zomato', 'POS', 'Mobile App'];
 
 export function ItemModal({ initial, categoryId, onSave, onClose }) {
   const [name, setName]                   = useState(initial?.name || '');
@@ -110,7 +122,7 @@ export function ItemModal({ initial, categoryId, onSave, onClose }) {
   const [minOrderQty, setMinOrderQty]     = useState(initial?.minOrderQty || '1');
   const [maxOrderQty, setMaxOrderQty]     = useState(initial?.maxOrderQty || '');
   const [allergens, setAllergens]         = useState(initial?.allergens || []);
-  const [channels, setChannels]           = useState(initial?.channels || ['Delivery','Takeaway','Dine-in']);
+  const [channels, setChannels]           = useState(initial?.channels || ['Swiggy', 'Zomato', 'POS', 'Mobile App']);
 
   const toggleTag      = (t) => setTags(p => p.includes(t) ? p.filter(x => x !== t) : [...p, t]);
   const toggleAllergen = (a) => setAllergens(p => p.includes(a) ? p.filter(x => x !== a) : [...p, a]);
@@ -128,7 +140,7 @@ export function ItemModal({ initial, categoryId, onSave, onClose }) {
   );
 
   return (
-    <ModalWrapper title={initial ? 'Edit Item' : 'Add Item'} onClose={onClose}
+    <ModalWrapper title={initial ? 'Edit Item' : 'Add Item'} onClose={onClose} maxWidth="max-w-md"
       footer={<form onSubmit={handleSave} className="contents"><SaveCancelFooter onClose={onClose} /></form>}>
 
       {/* Basic */}
@@ -667,5 +679,35 @@ export function OfferModal({ initial, items, onSave, onClose }) {
         </div>
       </Field>
     </ModalWrapper>
+  );
+}
+
+// ─── Delete Confirmation Modal ────────────────────────────────────────────────
+export function ConfirmModal({ title, message, confirmText = 'Delete', onConfirm, onClose }) {
+  const overlayRef = useRef();
+  useEffect(() => {
+    const h = (e) => { if (e.key === 'Escape') onClose(); };
+    window.addEventListener('keydown', h);
+    return () => window.removeEventListener('keydown', h);
+  }, [onClose]);
+
+  return (
+    <div ref={overlayRef} onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-sm mx-4 flex flex-col animate-in fade-in zoom-in-95">
+        <div className="p-5">
+          <h3 className="text-base font-bold text-foreground mb-2">{title}</h3>
+          <p className="text-sm text-muted-foreground">{message}</p>
+        </div>
+        <div className="px-5 pb-5 flex gap-3">
+          <button onClick={onClose} className="flex-1 py-2 rounded-lg border border-border text-sm font-semibold hover:bg-muted transition-colors">
+            Cancel
+          </button>
+          <button onClick={() => { onConfirm(); onClose(); }} className="flex-1 py-2 rounded-lg bg-red-500 text-white text-sm font-bold hover:bg-red-600 transition-colors">
+            {confirmText}
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }

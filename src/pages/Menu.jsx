@@ -6,11 +6,13 @@ import StoreLinkingTab from '../components/menu/linking/StoreLinkingTab';
 import ModifiersTab from '../components/menu/modifiers/ModifiersTab';
 import TaxesTab from '../components/menu/taxes/TaxesTab';
 import ThirdPartyLinkingTab from '../components/menu/linking/ThirdPartyLinkingTab';
+import MenuPushTab from '../components/menu/push/MenuPushTab';
 
 
 const TABS = [
   { id: 'menus',     label: 'Menus' },
   { id: 'builder',   label: 'Builder' },
+  { id: 'push',      label: 'Push Menu' },
   { id: 'links',     label: 'Store Links' },
   { id: 'modifiers', label: 'Modifiers' },
   { id: 'taxes',     label: 'Taxes' },
@@ -47,6 +49,7 @@ export default function Menu() {
       <div className="flex-1 overflow-hidden relative">
         {activeTab === 'menus'     && <MenusTab />}
         {activeTab === 'builder'   && <MenuBuilderTab />}
+        {activeTab === 'push'      && <MenuPushTab />}
         {activeTab === 'links'     && <StoreLinkingTab />}
         {activeTab === 'modifiers' && <ModifiersTab />}
         {activeTab === 'taxes'     && <div className="h-full overflow-y-auto"><TaxesTab /></div>}

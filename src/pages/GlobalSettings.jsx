@@ -136,10 +136,10 @@ export default function GlobalSettings() {
 
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-6 md:p-8">
-          <div className="max-w-5xl mx-auto space-y-8 pb-12">
+          <div className="max-w-5xl mx-auto space-y-6 pb-12">
             
             {activeTab === 'overview' && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
                 {/* Quick Actions */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="bg-primary text-primary-foreground p-6 rounded-2xl shadow-lg relative overflow-hidden group cursor-pointer" onClick={() => setShowResModal(true)}>
@@ -222,7 +222,7 @@ export default function GlobalSettings() {
             )}
 
             {activeTab === 'credentials' && (
-              <div className="space-y-8 animate-in fade-in duration-300">
+              <div className="space-y-6 animate-in fade-in duration-300">
                 <div className="bg-card border border-border rounded-2xl overflow-hidden">
                   <div className="px-6 py-5 border-b border-border bg-muted/20 flex items-center gap-3">
                     <Map className="w-5 h-5 text-primary" />
@@ -353,7 +353,7 @@ export default function GlobalSettings() {
             )}
 
             {activeTab === 'branding' && (
-              <div className="space-y-8 animate-in fade-in duration-300">
+              <div className="space-y-6 animate-in fade-in duration-300">
                 <div className="bg-card border border-border rounded-2xl overflow-hidden">
                   <div className="px-6 py-5 border-b border-border bg-muted/20 flex items-center gap-3">
                     <PaintBucket className="w-5 h-5 text-primary" />
@@ -362,7 +362,7 @@ export default function GlobalSettings() {
                       <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">Theme & UI Preferences</p>
                     </div>
                   </div>
-                  <div className="p-6 space-y-8">
+                  <div className="p-6 space-y-6">
                     {/* Theme section removed - now in global topbar settings */}
 
                     <div className="h-px bg-border"></div>

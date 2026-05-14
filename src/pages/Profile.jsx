@@ -58,7 +58,7 @@ export default function Profile() {
             
             {/* Personal Info Tab */}
             {activeTab === 'personal' && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <div>
                   <h2 className="text-xl font-bold border-b border-border pb-2 mb-6">Personal Information</h2>
                   
@@ -107,7 +107,7 @@ export default function Profile() {
 
             {/* Security Tab */}
             {activeTab === 'security' && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <div>
                   <h2 className="text-xl font-bold border-b border-border pb-2 mb-6">Change Password</h2>
                   <div className="space-y-4">
@@ -155,7 +155,7 @@ export default function Profile() {
 
             {/* Notifications Tab */}
             {activeTab === 'notifications' && (
-              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2 duration-300">
+              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-300">
                 <h2 className="text-xl font-bold border-b border-border pb-2 mb-6">Notification Preferences</h2>
                 
                 <div className="space-y-6">
@@ -165,8 +165,8 @@ export default function Profile() {
                       <h4 className="font-bold text-foreground">Daily Sales Summary</h4>
                       <p className="text-sm text-muted-foreground">Receive a daily email with sales and operational metrics.</p>
                     </div>
-                    <div className="w-12 h-6 bg-green-500 rounded-full relative cursor-pointer">
-                      <div className="w-4 h-4 bg-white rounded-full absolute left-7 top-1 shadow-sm"></div>
+                    <div className="w-14 h-7 bg-green-500 rounded-full relative cursor-pointer">
+                      <div className="w-5 h-5 bg-white rounded-full absolute left-8 top-1 shadow-sm"></div>
                     </div>
                   </div>
 
@@ -178,8 +178,8 @@ export default function Profile() {
                       <h4 className="font-bold text-foreground">Critical Operational Alerts</h4>
                       <p className="text-sm text-muted-foreground">SMS alerts when high volume of orders fail or gateways go down.</p>
                     </div>
-                    <div className="w-12 h-6 bg-green-500 rounded-full relative cursor-pointer">
-                      <div className="w-4 h-4 bg-white rounded-full absolute left-7 top-1 shadow-sm"></div>
+                    <div className="w-14 h-7 bg-green-500 rounded-full relative cursor-pointer">
+                      <div className="w-5 h-5 bg-white rounded-full absolute left-8 top-1 shadow-sm"></div>
                     </div>
                   </div>
 
@@ -191,8 +191,8 @@ export default function Profile() {
                       <h4 className="font-bold text-foreground">New Device Login Alerts</h4>
                       <p className="text-sm text-muted-foreground">Email notification whenever your account is accessed from a new device.</p>
                     </div>
-                    <div className="w-12 h-6 bg-green-500 rounded-full relative cursor-pointer">
-                      <div className="w-4 h-4 bg-white rounded-full absolute left-7 top-1 shadow-sm"></div>
+                    <div className="w-14 h-7 bg-green-500 rounded-full relative cursor-pointer">
+                      <div className="w-5 h-5 bg-white rounded-full absolute left-8 top-1 shadow-sm"></div>
                     </div>
                   </div>
                   
@@ -204,8 +204,8 @@ export default function Profile() {
                       <h4 className="font-bold text-foreground">Restrobopos Updates & News</h4>
                       <p className="text-sm text-muted-foreground">Product updates, new features, and SaaS announcements.</p>
                     </div>
-                    <div className="w-12 h-6 bg-muted-foreground/30 rounded-full relative cursor-pointer">
-                      <div className="w-4 h-4 bg-white rounded-full absolute left-1 top-1 shadow-sm"></div>
+                    <div className="w-14 h-7 bg-muted-foreground/30 rounded-full relative cursor-pointer">
+                      <div className="w-5 h-5 bg-white rounded-full absolute left-1 top-1 shadow-sm"></div>
                     </div>
                   </div>
 

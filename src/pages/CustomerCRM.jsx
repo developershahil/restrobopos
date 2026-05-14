@@ -134,7 +134,7 @@ export default function CustomerCRM() {
         {selectedCustomer ? (
           <div className="p-6 max-w-3xl mx-auto">
             {/* Customer Header */}
-            <div className="flex justify-between items-start mb-8">
+            <div className="flex justify-between items-start mb-6">
               <div>
                 <h2 className="text-2xl font-bold">{selectedCustomer.name}</h2>
                 <p className="text-muted-foreground mt-1">{selectedCustomer.phone} • Customer since 2024</p>
@@ -179,7 +179,7 @@ export default function CustomerCRM() {
             </div>
 
             {/* Customer Details Card */}
-            <div className="mb-8 p-5 bg-background border border-border rounded-xl">
+            <div className="mb-6 p-5 bg-background border border-border rounded-xl">
               <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2 uppercase tracking-wider">
                 <User className="w-4 h-4 text-primary" /> Customer Details
               </h3>

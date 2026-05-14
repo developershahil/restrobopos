@@ -22,8 +22,12 @@ export default function VariantManager({ itemId }) {
       </div>
 
       {itemVariants.length === 0 ? (
-        <div className="border border-dashed border-border rounded-lg py-5 text-center text-xs text-muted-foreground">
-          No variants. Click Add to create one.
+        <div className="border border-dashed border-border rounded-xl py-8 flex flex-col items-center justify-center text-center px-4 bg-muted/10">
+          <div className="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-3">
+            <Plus className="w-5 h-5" />
+          </div>
+          <p className="text-sm font-bold text-foreground mb-1">No variants configured</p>
+          <p className="text-xs text-muted-foreground max-w-[200px]">Add variants like "Small" or "Large" to offer multiple price points.</p>
         </div>
       ) : (
         <div className="border border-border rounded-lg overflow-hidden">

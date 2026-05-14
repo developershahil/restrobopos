@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Pencil, Trash2, Link, ChevronLeft, ChevronRight, X, MapPin, Search, Check, Settings2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Link, ChevronLeft, ChevronRight, X, MapPin, Search, Check, Settings2, ChevronDown, Store } from 'lucide-react';
 import LinkOfferTab from './LinkOfferTab';
 
 const MOCK_OUTLETS = [
@@ -136,16 +136,22 @@ export default function OfferList({ onAddOffer, onEditOffer }) {
       <div className="bg-card border border-border rounded-xl shadow-sm">
         {/* Outlet Filter */}
         <div className="p-4 border-b border-border">
-          <select
-            value={selectedOutlet}
-            onChange={e => setSelectedOutlet(e.target.value)}
-            className="w-72 bg-background border border-border rounded-lg px-4 py-2.5 text-sm font-medium text-foreground outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors"
-          >
-            <option value="">Select outlets</option>
-            <option value="all">All Outlets</option>
-            <option value="koramangala">Koramangala Branch</option>
-            <option value="indiranagar">Indiranagar Branch</option>
-          </select>
+          <div className="relative inline-block w-72">
+            <div className="flex items-center gap-2 bg-background border border-border px-4 py-2.5 rounded-lg hover:border-primary/50 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
+              <Store className="w-4 h-4 text-muted-foreground shrink-0" />
+              <select
+                value={selectedOutlet}
+                onChange={e => setSelectedOutlet(e.target.value)}
+                className="w-full bg-transparent text-sm font-medium text-foreground outline-none appearance-none cursor-pointer pr-4"
+              >
+                <option value="">Select outlets</option>
+                <option value="all">All Outlets</option>
+                <option value="koramangala">Koramangala Branch</option>
+                <option value="indiranagar">Indiranagar Branch</option>
+              </select>
+              <ChevronDown className="w-4 h-4 text-muted-foreground absolute right-3 pointer-events-none" />
+            </div>
+          </div>
         </div>
 
         {/* Table */}
@@ -179,9 +185,9 @@ export default function OfferList({ onAddOffer, onEditOffer }) {
                       {/* Toggle */}
                       <button
                         onClick={() => toggleOffer(offer.id)}
-                        className={`relative w-11 h-6 rounded-full transition-colors ${offer.active ? 'bg-primary' : 'bg-muted'}`}
+                        className={`w-14 h-7 rounded-full relative transition-all ${offer.active ? 'bg-primary' : 'bg-muted'}`}
                       >
-                        <span className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${offer.active ? 'translate-x-5' : 'translate-x-0'}`} />
+                        <div className={`w-5 h-5 bg-white rounded-full absolute top-1 shadow-sm transition-all ${offer.active ? 'left-8' : 'left-1'}`} />
                       </button>
                       <button
                         onClick={() => onEditOffer(offer)}

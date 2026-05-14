@@ -3,7 +3,7 @@ import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { 
   Home, Users, ShoppingBag, Menu, Package, Store, 
   Settings, ChevronLeft, ChevronRight, BarChart3, 
-  Tag, ToggleLeft, Globe, LogOut, User as UserIcon, Building, HelpCircle, ChevronUp, LayoutDashboard, Server
+  Tag, ToggleLeft, Globe, LogOut, User as UserIcon, Building, HelpCircle, ChevronUp, LayoutDashboard, Server, Bell
 } from 'lucide-react';
 
 const NAV_GROUPS = [
@@ -20,6 +20,7 @@ const NAV_GROUPS = [
       { name: 'Orders', href: '/orders', icon: ShoppingBag },
       { name: 'Customers', href: '/customers', icon: Users },
       { name: 'Stores', href: '/stores', icon: Store },
+      { name: 'Notifications', href: '/notifications', icon: Bell },
     ]
   },
   {
@@ -89,6 +90,7 @@ export default function Sidebar({ onOpenSwitchModal, activeBrand }) {
                 <NavLink
                   key={item.name}
                   to={item.href}
+                  onClick={() => setIsCollapsed(true)}
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${
                       isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -116,6 +118,7 @@ export default function Sidebar({ onOpenSwitchModal, activeBrand }) {
               <NavLink
                 key={item.name}
                 to={item.href}
+                onClick={() => setIsCollapsed(true)}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-bold transition-all ${
                     isActive ? 'bg-primary/10 text-primary' : 'text-muted-foreground hover:bg-muted hover:text-foreground'

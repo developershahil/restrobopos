@@ -62,8 +62,8 @@ export default function ItemAvailability() {
         <div className="flex items-center gap-4 w-full sm:w-auto">
           {/* Outlet Selector */}
           <div className="relative group cursor-pointer">
-            <div className="flex items-center gap-2 bg-muted/30 border border-border px-4 py-2 rounded-lg hover:bg-muted/50 transition-colors">
-              <Store className="w-4 h-4 text-muted-foreground" />
+            <div className="flex items-center gap-2 bg-background border border-border px-4 py-2.5 rounded-lg hover:border-primary/50 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all shadow-sm">
+              <Store className="w-4 h-4 text-muted-foreground shrink-0" />
               <select 
                 value={selectedOutlet}
                 onChange={(e) => setSelectedOutlet(e.target.value)}
@@ -84,7 +84,7 @@ export default function ItemAvailability() {
               placeholder="Search items..." 
               value={searchTerm}
               onChange={e => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 bg-background border border-border rounded-lg text-sm outline-none focus:border-primary shadow-sm"
+              className="w-full pl-9 pr-4 py-2.5 bg-background border border-border rounded-lg text-sm outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all shadow-sm"
             />
           </div>
         </div>
@@ -189,9 +189,9 @@ export default function ItemAvailability() {
                               }
                               <button 
                                 onClick={() => toggleAddonStock(addon.id)}
-                                className={`w-12 h-6 rounded-full transition-colors relative flex items-center shadow-inner ${addon.inStock ? 'bg-green-500' : 'bg-muted-foreground/30'}`}
+                                className={`w-14 h-7 rounded-full transition-colors relative flex items-center shadow-inner ${addon.inStock ? 'bg-green-500' : 'bg-muted-foreground/30'}`}
                               >
-                                <div className={`w-4 h-4 bg-white rounded-full absolute transition-all shadow-md ${addon.inStock ? 'left-7' : 'left-1'}`} />
+                                <div className={`w-5 h-5 bg-white rounded-full absolute transition-all shadow-md ${addon.inStock ? 'left-8' : 'left-1'}`} />
                               </button>
                             </div>
                           </div>
@@ -231,9 +231,9 @@ export default function ItemAvailability() {
                       
                       <button 
                         onClick={() => toggleItemStock(item.id)}
-                        className={`w-12 h-6 rounded-full transition-colors relative flex items-center shadow-inner ${item.inStock ? 'bg-green-500' : 'bg-muted-foreground/30'}`}
+                        className={`w-14 h-7 rounded-full transition-colors relative flex items-center shadow-inner ${item.inStock ? 'bg-green-500' : 'bg-muted-foreground/30'}`}
                       >
-                        <div className={`w-4 h-4 bg-white rounded-full absolute transition-all shadow-md ${item.inStock ? 'left-7' : 'left-1'}`} />
+                        <div className={`w-5 h-5 bg-white rounded-full absolute transition-all shadow-md ${item.inStock ? 'left-8' : 'left-1'}`} />
                       </button>
                     </div>
                   </div>

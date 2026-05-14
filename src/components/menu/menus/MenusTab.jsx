@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Plus, Search, Calendar, MoreVertical, Clock, CheckCircle2, AlertTriangle, Zap, Edit2, Trash2, X } from 'lucide-react';
+import { Plus, Search, Calendar, MoreVertical, Clock, CheckCircle2, AlertTriangle, Zap, Edit2, Trash2, X, BookOpen } from 'lucide-react';
 import { useMenuStore } from '../../../store/useMenuStore';
+import { ConfirmModal } from '../builder/modals/FormModals';
 
 // ─── Create / Edit Modal ──────────────────────────────────────────────────────
 function MenuFormModal({ initial, onSave, onClose }) {
@@ -144,9 +145,20 @@ export default function MenusTab() {
       {/* Table */}
       <div className="flex-1 overflow-auto" onClick={() => setMenuOpen(null)}>
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-muted-foreground">
-            <p className="text-sm font-semibold">No menus found</p>
-            <p className="text-xs mt-1">Click "Create Menu" to add your first menu</p>
+          <div className="flex flex-col items-center justify-center h-[60vh] text-center px-4">
+            <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4">
+              <BookOpen className="w-8 h-8" />
+            </div>
+            <p className="text-lg font-bold text-foreground mb-1">No menus created yet</p>
+            <p className="text-sm text-muted-foreground max-w-md mb-6">
+              Create your first menu to start adding categories and items. You can create different menus for breakfast, lunch, or festive events.
+            </p>
+            <button
+              onClick={() => setModal({ mode: 'add' })}
+              className="flex items-center gap-2 bg-primary text-primary-foreground px-6 py-2.5 rounded-xl text-sm font-bold hover:bg-primary/90 transition-all hover:-translate-y-0.5 shadow-md"
+            >
+              <Plus className="w-5 h-5" /> Create Your First Menu
+            </button>
           </div>
         ) : (
           <table className="w-full text-left border-collapse">
@@ -204,7 +216,7 @@ export default function MenusTab() {
                         <Edit2 className="w-4 h-4" />
                       </button>
                       <button
-                        onClick={(e) => { e.stopPropagation(); deleteMenu(menu.id); }}
+                        onClick={(e) => { e.stopPropagation(); setModal({ mode: 'delete', menu }); }}
                         className="p-1.5 rounded hover:bg-red-50 hover:text-red-500 text-muted-foreground transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -224,6 +236,14 @@ export default function MenusTab() {
       )}
       {modal?.mode === 'edit' && (
         <MenuFormModal initial={modal.menu} onSave={(data) => updateMenu(modal.menu.id, data)} onClose={() => setModal(null)} />
+      )}
+      {modal?.mode === 'delete' && (
+        <ConfirmModal 
+          title="Delete Menu" 
+          message={`Are you sure you want to delete the "${modal.menu.name}" menu? This action cannot be undone.`} 
+          onConfirm={() => deleteMenu(modal.menu.id)} 
+          onClose={() => setModal(null)} 
+        />
       )}
     </div>
   );

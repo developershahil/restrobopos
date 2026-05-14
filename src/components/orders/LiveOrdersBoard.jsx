@@ -328,19 +328,21 @@ export default function LiveOrdersBoard() {
                 </div>
               </div>
 
-              {/* Action Buttons Row */}
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 pb-4">
-                <button className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border bg-card font-bold hover:bg-muted transition-colors text-sm shadow-sm">
+            </div>
+
+            {/* Sticky Action Buttons Footer */}
+            <div className="bg-card border-t border-border p-4 shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20">
+              <div className="mx-auto w-full max-w-5xl grid grid-cols-2 md:grid-cols-3 gap-3">
+                <button className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border bg-background font-bold hover:bg-muted transition-colors text-sm shadow-sm">
                   <Printer className="w-4 h-4 text-muted-foreground" /> Print KOT
                 </button>
-                <button className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border bg-card font-bold hover:bg-muted transition-colors text-sm shadow-sm">
+                <button className="flex items-center justify-center gap-2 py-2.5 rounded-xl border border-border bg-background font-bold hover:bg-muted transition-colors text-sm shadow-sm">
                   <Printer className="w-4 h-4 text-muted-foreground" /> Print Bill
                 </button>
                 <button className="col-span-2 md:col-span-1 flex items-center justify-center gap-2 py-2.5 rounded-xl border border-red-200 bg-red-50 text-red-600 font-bold hover:bg-red-100 transition-colors text-sm shadow-sm">
                   <X className="w-4 h-4" /> Cancel
                 </button>
               </div>
-
             </div>
           </>
         ) : (

@@ -98,6 +98,9 @@ export const useMenuStore = create((set, get) => ({
   showPreviewDrawer: false,
   setShowPreviewDrawer: (show) => set({ showPreviewDrawer: show }),
 
+  hasUnsyncedChanges: false,
+  setHasUnsyncedChanges: (val) => set({ hasUnsyncedChanges: val }),
+
   // ── Menus ────────────────────────────────────────────────────
   menus: initialMenus,
   selectedMenuId: 'm1',
@@ -118,33 +121,85 @@ export const useMenuStore = create((set, get) => ({
   selectedItemForEdit: null,
   setSelectedItemForEdit: (item) => set({ selectedItemForEdit: item, showItemDrawer: true }),
 
-  // ── Categories ───────────────────────────────────────────────
   categories: initialCategories,
   setCategories: (categories) => set({ categories }),
-  addCategory: (data) => set((s) => ({ categories: [...s.categories, { id: uid('c'), color: COLORS[s.categories.length % COLORS.length], ...data }] })),
-  updateCategory: (id, data) => set((s) => ({ categories: s.categories.map(c => c.id === id ? { ...c, ...data } : c) })),
+  addCategory: (data, timing) => set((s) => {
+    const id = uid('c');
+    return {
+      categories: [...s.categories, { id, color: COLORS[s.categories.length % COLORS.length], ...data }],
+      categoryTiming: timing ? { ...s.categoryTiming, [id]: timing } : s.categoryTiming
+    };
+  }),
+  updateCategory: (id, data, timing) => set((s) => ({
+    categories: s.categories.map(c => c.id === id ? { ...c, ...data } : c),
+    categoryTiming: timing ? { ...s.categoryTiming, [id]: timing } : s.categoryTiming
+  })),
   deleteCategory: (id) => set((s) => ({
     categories: s.categories.filter(c => c.id !== id),
     items: s.items.filter(i => i.categoryId !== id),
     selectedCategoryId: s.selectedCategoryId === id ? (s.categories.find(c => c.id !== id)?.id || null) : s.selectedCategoryId,
   })),
+  moveCategory: (id, direction) => set((s) => {
+    const idx = s.categories.findIndex(c => c.id === id);
+    if (idx < 0 || (direction === 'up' && idx === 0) || (direction === 'down' && idx === s.categories.length - 1)) return s;
+    const newCats = [...s.categories];
+    const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+    [newCats[idx], newCats[swapIdx]] = [newCats[swapIdx], newCats[idx]];
+    return { categories: newCats };
+  }),
+  reorderCategory: (sourceId, targetId) => set((s) => {
+    const sourceIdx = s.categories.findIndex(c => c.id === sourceId);
+    const targetIdx = s.categories.findIndex(c => c.id === targetId);
+    if (sourceIdx < 0 || targetIdx < 0 || sourceIdx === targetIdx) return s;
+    const newCats = [...s.categories];
+    const [moved] = newCats.splice(sourceIdx, 1);
+    newCats.splice(targetIdx, 0, moved);
+    return { categories: newCats };
+  }),
 
   // ── Items ─────────────────────────────────────────────────────
   items: initialItems,
   setItems: (items) => set({ items }),
-  addItem: (data) => set((s) => ({ items: [...s.items, { id: uid('i'), inStock: true, stockQty: '', itemCode: '', discount: '0', minOrderQty: '1', maxOrderQty: '', tags: [], description: '', prepTime: '', calories: '', packagingCharge: '0', allergens: [], channels: ['Delivery','Takeaway','Dine-in'], ...data }] })),
+  addItem: (data) => set((s) => ({ items: [...s.items, { id: uid('i'), inStock: true, stockQty: '', itemCode: '', discount: '0', minOrderQty: '1', maxOrderQty: '', tags: [], description: '', prepTime: '', calories: '', packagingCharge: '0', allergens: [], channels: ['Swiggy', 'Zomato', 'POS', 'Mobile App'], ...data }] })),
   updateItem: (id, data) => set((s) => ({ items: s.items.map(i => i.id === id ? { ...i, ...data } : i) })),
   deleteItem: (id) => set((s) => ({
     items: s.items.filter(i => i.id !== id),
     selectedItemId: s.selectedItemId === id ? null : s.selectedItemId,
   })),
+  moveItem: (id, direction) => set((s) => {
+    const idx = s.items.findIndex(i => i.id === id);
+    if (idx < 0) return s;
+    const item = s.items[idx];
+    const categoryItems = s.items.filter(i => i.categoryId === item.categoryId);
+    const catIdx = categoryItems.findIndex(i => i.id === id);
+    if ((direction === 'up' && catIdx === 0) || (direction === 'down' && catIdx === categoryItems.length - 1)) return s;
+    
+    const swapItem = direction === 'up' ? categoryItems[catIdx - 1] : categoryItems[catIdx + 1];
+    const globalSwapIdx = s.items.findIndex(i => i.id === swapItem.id);
+    
+    const newItems = [...s.items];
+    [newItems[idx], newItems[globalSwapIdx]] = [newItems[globalSwapIdx], newItems[idx]];
+    return { items: newItems };
+  }),
+  reorderItem: (sourceId, targetId) => set((s) => {
+    const sourceIdx = s.items.findIndex(i => i.id === sourceId);
+    const targetIdx = s.items.findIndex(i => i.id === targetId);
+    if (sourceIdx < 0 || targetIdx < 0 || sourceIdx === targetIdx) return s;
+    const newItems = [...s.items];
+    const [moved] = newItems.splice(sourceIdx, 1);
+    newItems.splice(targetIdx, 0, moved);
+    return { items: newItems };
+  }),
   duplicateItem: (id) => set((s) => {
     const src = s.items.find(i => i.id === id);
     if (!src) return s;
     return { items: [...s.items, { ...src, id: uid('i'), name: `${src.name} (Copy)` }] };
   }),
   toggleItemStock: (id) => set((s) => ({
-    items: s.items.map(i => i.id === id ? { ...i, inStock: !i.inStock, status: i.inStock ? 'Out of Stock' : 'Active' } : i),
+    items: s.items.map(i => i.id === id ? { ...i, inStock: !i.inStock, status: i.inStock ? 'Out of Stock' : 'Active', snoozeUntil: null } : i),
+  })),
+  snoozeItem: (id, snoozeUntil) => set((s) => ({
+    items: s.items.map(i => i.id === id ? { ...i, inStock: false, status: 'Out of Stock', snoozeUntil } : i),
   })),
   bulkToggleCategory: (catId, active) => set((s) => ({
     items: s.items.map(i => i.categoryId === catId ? { ...i, status: active ? 'Active' : 'Inactive', inStock: active } : i),
@@ -226,9 +281,12 @@ export const useMenuStore = create((set, get) => ({
     return { [linkField]: currentLinks };
   }),
 
-  // ── Item Timing ───────────────────────────────────────────────
+  // ── Item & Category Timing ───────────────────────────────────────────────
   itemTiming: initialItemTiming,
   setItemTiming: (itemId, data) => set((s) => ({ itemTiming: { ...s.itemTiming, [itemId]: data } })),
+  
+  categoryTiming: {},
+  setCategoryTiming: (catId, data) => set((s) => ({ categoryTiming: { ...s.categoryTiming, [catId]: data } })),
 
   // ── Taxes ─────────────────────────────────────────────────────
   taxes: initialTaxes,
@@ -249,5 +307,20 @@ export const useMenuStore = create((set, get) => ({
   links: { s1: ['c1','c2','c3'], s2: ['c1','c2','c3','c4'], s3: ['c1','c2'], s4: ['c4'] },
   setLinks: (updater) => set((state) => ({
     links: typeof updater === 'function' ? updater(state.links) : updater,
+  })),
+
+  // ── Menu Pushing ──────────────────────────────────────────────
+  pushHistory: [
+    { id: 'ph1', date: new Date(Date.now() - 86400000).toISOString(), platforms: ['Swiggy', 'Zomato'], status: 'Success', notes: 'Weekend Price Update' }
+  ],
+  scheduledPushes: [],
+  schedulePush: (data) => set((s) => ({ 
+    scheduledPushes: [...s.scheduledPushes, { id: uid('sp'), ...data }] 
+  })),
+  cancelPush: (id) => set((s) => ({
+    scheduledPushes: s.scheduledPushes.filter(p => p.id !== id)
+  })),
+  recordPush: (data) => set((s) => ({
+    pushHistory: [{ id: uid('ph'), date: new Date().toISOString(), status: 'Success', ...data }, ...s.pushHistory]
   })),
 }));
