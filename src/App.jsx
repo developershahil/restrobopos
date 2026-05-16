@@ -13,6 +13,7 @@ import StoreSettings from './pages/StoreSettings';
 import GlobalSettings from './pages/GlobalSettings';
 import Notifications from './pages/Notifications';
 import Login from './pages/Login';
+import Inventory from './pages/Inventory';
 
 // Simple Auth Component
 const ProtectedRoute = ({ children }) => {
@@ -42,7 +43,7 @@ function App() {
           <Route path="menu" element={<Menu />} />
           <Route path="offers" element={<Offers />} />
           <Route path="availability" element={<ItemAvailability />} />
-          <Route path="inventory" element={<div className="p-6">Inventory Module (Coming Soon)</div>} />
+          <Route path="inventory" element={<Inventory />} />
           <Route path="stores" element={<Stores />} />
           <Route path="settings" element={<StoreSettings />} />
           <Route path="global-settings" element={<GlobalSettings />} />

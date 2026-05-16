@@ -92,6 +92,7 @@ export default function StoreSettings() {
   const [modalType, setModalType] = useState(null); // 'modes' or 'sequence'
   const [currencySearch, setCurrencySearch] = useState('');
   const [isCurrencyDropdownOpen, setIsCurrencyDropdownOpen] = useState(false);
+  const [riderTab, setRiderTab] = useState('fleet'); // 'fleet' or 'auto'
 
   const initialValues = {
     deliveryEnabled: true,
@@ -219,6 +220,10 @@ export default function StoreSettings() {
 
     // Rider
     inHouseRiderEnabled: true,
+    autoAssignmentEnabled: true,
+    autoAssignStrategy: 'Nearest Rider First',
+    autoAssignDelay: 2,
+    maxOrdersPerRider: 3,
   };
 
   const [formData, setFormData] = useState(initialValues);
@@ -248,33 +253,33 @@ export default function StoreSettings() {
   return (
     <div className="flex flex-col h-full bg-slate-50 overflow-hidden font-sans">
       {/* Header */}
-      <div className="bg-white border-b border-slate-200 px-8 py-5 shrink-0 flex items-center justify-between z-30">
-        <div className="flex items-center gap-4">
-          <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
+      <div className="bg-white border-b border-slate-200 px-4 md:px-8 py-4 md:py-5 shrink-0 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 z-30">
+        <div className="flex items-center gap-3 md:gap-4">
+          <div className="w-9 h-9 md:w-10 md:h-10 bg-indigo-50 rounded-xl flex items-center justify-center">
             <Settings className="w-5 h-5 text-indigo-600" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-slate-900 tracking-tight">Store Settings</h1>
-            <p className="text-xs text-slate-500 font-medium">Manage your outlet preferences and configurations</p>
+            <h1 className="text-base md:text-lg font-bold text-slate-900 tracking-tight">Store Settings</h1>
+            <p className="text-xs text-slate-500 font-medium hidden sm:block">Manage your outlet preferences and configurations</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-3">
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Active Outlet</span>
-            <div className="relative group">
-              <div className="flex items-center gap-3 bg-slate-50 border border-slate-200 pl-4 pr-10 py-2.5 rounded-2xl cursor-pointer hover:border-indigo-300 transition-all shadow-sm group-hover:shadow-indigo-100/50">
+        <div className="flex items-center gap-3 md:gap-6 w-full sm:w-auto">
+          <div className="flex items-center gap-2 md:gap-3 flex-1 sm:flex-initial">
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] hidden md:inline">Active Outlet</span>
+            <div className="relative group flex-1 sm:flex-initial">
+              <div className="flex items-center gap-2 md:gap-3 bg-slate-50 border border-slate-200 pl-3 md:pl-4 pr-8 md:pr-10 py-2 md:py-2.5 rounded-xl md:rounded-2xl cursor-pointer hover:border-indigo-300 transition-all shadow-sm group-hover:shadow-indigo-100/50">
                 <Store className="w-4 h-4 text-indigo-500" />
                 <select 
                   value={selectedOutlet}
                   onChange={(e) => setSelectedOutlet(e.target.value)}
-                  className="bg-transparent text-sm font-black text-slate-700 outline-none appearance-none cursor-pointer pr-2"
+                  className="bg-transparent text-sm font-black text-slate-700 outline-none appearance-none cursor-pointer pr-2 w-full"
                 >
                   {OUTLETS.map(outlet => (
                     <option key={outlet.id} value={outlet.id}>{outlet.name}</option>
                   ))}
                 </select>
-                <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-indigo-500 transition-colors">
+                <div className="absolute right-3 md:right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover:text-indigo-500 transition-colors">
                   <ChevronDown className="w-4 h-4" />
                 </div>
               </div>
@@ -283,12 +288,14 @@ export default function StoreSettings() {
         </div>
       </div>
 
-      <div className="flex-1 flex overflow-hidden">
-        {/* Navigation Sidebar */}
-        <div className="w-72 bg-white border-r border-slate-200 overflow-y-auto shrink-0 py-6 scrollbar-hide">
-          <div className="px-6 mb-4">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        {/* Navigation Sidebar — desktop: vertical sidebar, mobile: horizontal scroll */}
+        <div className="md:w-72 bg-white md:border-r border-b md:border-b-0 border-slate-200 overflow-x-auto md:overflow-y-auto shrink-0 md:py-6 scrollbar-hide">
+          <div className="px-4 md:px-6 mb-2 md:mb-4 hidden md:block">
             <label className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Configuration</label>
           </div>
+          {/* Mobile: horizontal scroll, Desktop: vertical stack */}
+          <div className="flex md:flex-col gap-1 px-3 md:px-0 py-2 md:py-0">
           {CATEGORIES.map(category => (
             <button
               key={category.id}
@@ -296,27 +303,29 @@ export default function StoreSettings() {
                 setActiveCategory(category.id);
                 setActiveTab(category.tabs[0].id);
               }}
-              className={`w-full flex items-center gap-3 px-6 py-3.5 transition-all text-left relative group ${
+              className={`flex items-center gap-2 md:gap-3 px-3 md:px-6 py-2.5 md:py-3.5 transition-all text-left relative group whitespace-nowrap md:whitespace-normal md:w-full shrink-0 md:shrink rounded-lg md:rounded-none ${
                 activeCategory === category.id 
-                  ? 'text-indigo-600' 
+                  ? 'text-indigo-600 bg-indigo-50 md:bg-transparent' 
                   : 'text-slate-500 hover:text-slate-800'
               }`}
             >
-              <div className={`absolute left-0 top-0 bottom-0 w-1 bg-indigo-600 transition-all ${activeCategory === category.id ? 'opacity-100' : 'opacity-0'}`} />
-              <div className={`p-2 rounded-lg transition-colors ${activeCategory === category.id ? 'bg-indigo-50' : 'bg-transparent group-hover:bg-slate-50'}`}>
+              <div className={`absolute left-0 top-0 bottom-0 w-1 bg-indigo-600 transition-all hidden md:block ${activeCategory === category.id ? 'opacity-100' : 'opacity-0'}`} />
+              <div className={`p-1.5 md:p-2 rounded-lg transition-colors ${activeCategory === category.id ? 'bg-indigo-50' : 'bg-transparent group-hover:bg-slate-50'}`}>
                 <category.icon className={`w-4 h-4 shrink-0 ${activeCategory === category.id ? 'text-indigo-600' : 'text-slate-400 group-hover:text-slate-600'}`} />
               </div>
               <div className="flex flex-col">
-                <span className={`text-sm font-bold tracking-tight ${activeCategory === category.id ? 'text-indigo-600' : 'text-slate-600'}`}>{category.label}</span>
-                <span className="text-[10px] text-slate-400 font-medium truncate w-40">{category.desc}</span>
+                <span className={`text-xs md:text-sm font-bold tracking-tight ${activeCategory === category.id ? 'text-indigo-600' : 'text-slate-600'}`}>{category.label}</span>
+                <span className="text-[10px] text-slate-400 font-medium truncate w-40 hidden md:block">{category.desc}</span>
               </div>
             </button>
-          ))}
+          ))
+          }
+          </div>
         </div>
 
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto bg-[#F8FAFC] relative">
-          <div className="max-w-4xl mx-auto p-6 pb-32">
+          <div className="max-w-4xl mx-auto p-4 md:p-6 pb-32">
             
             {/* Tab Header & Sub-navigation */}
             <div className="mb-6">
@@ -340,7 +349,7 @@ export default function StoreSettings() {
               </div>
               
               {/* Sub-tabs */}
-              <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide">
+              <div className="flex flex-wrap items-center gap-2 pb-2">
                 {CATEGORIES.find(c => c.id === activeCategory)?.tabs.map(tab => (
                   <button
                     key={tab.id}
@@ -1231,57 +1240,132 @@ export default function StoreSettings() {
                   <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm">
                     <div className="p-6 border-b border-slate-50 flex items-center justify-between bg-slate-50/30">
                       <div className="flex bg-white p-1 rounded-xl shadow-sm border border-slate-100">
-                        <button className="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-wider bg-indigo-600 text-white shadow-md">Fleet Service</button>
-                        <button className="px-6 py-2 rounded-lg text-xs font-black uppercase tracking-wider text-slate-400 hover:text-slate-600 transition-all">Auto Assignment</button>
+                        <button 
+                          onClick={() => setRiderTab('fleet')}
+                          className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${riderTab === 'fleet' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-600'}`}
+                        >Fleet Service</button>
+                        <button 
+                          onClick={() => setRiderTab('auto')}
+                          className={`px-6 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${riderTab === 'auto' ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-400 hover:text-slate-600'}`}
+                        >Auto Assignment</button>
                       </div>
                     </div>
                     
                     <div className="p-6 space-y-6">
-                      <div className="flex items-center justify-between p-6 rounded-2xl bg-indigo-900 text-white relative overflow-hidden shadow-xl shadow-indigo-900/10">
-                        <div className="relative z-10 flex items-center gap-6">
-                          <div className="w-14 h-14 bg-indigo-500/30 rounded-2xl flex items-center justify-center">
-                            <Bike className="w-8 h-8 text-white" />
+                      {riderTab === 'fleet' ? (
+                        <>
+                          <div className="flex items-center justify-between p-6 rounded-2xl bg-indigo-900 text-white relative overflow-hidden shadow-xl shadow-indigo-900/10">
+                            <div className="relative z-10 flex items-center gap-6">
+                              <div className="w-14 h-14 bg-indigo-500/30 rounded-2xl flex items-center justify-center">
+                                <Bike className="w-8 h-8 text-white" />
+                              </div>
+                              <div>
+                                <h3 className="text-lg font-bold tracking-tight mb-1">In-house Rider Fleet</h3>
+                                <p className="text-indigo-100/70 text-xs font-medium">Manage your own delivery team for localized fulfillment.</p>
+                              </div>
+                            </div>
+                            <div className="relative z-10">
+                              <button 
+                                onClick={() => handleToggle('inHouseRiderEnabled')}
+                                className={`w-14 h-7 rounded-full relative transition-all ${formData.inHouseRiderEnabled ? 'bg-indigo-500' : 'bg-slate-500/50'}`}
+                              >
+                                <div className={`w-5 h-5 bg-white rounded-full absolute top-1 shadow-sm transition-all ${formData.inHouseRiderEnabled ? 'left-8' : 'left-1'}`} />
+                              </button>
+                            </div>
                           </div>
-                          <div>
-                            <h3 className="text-lg font-bold tracking-tight mb-1">In-house Rider Fleet</h3>
-                            <p className="text-indigo-100/70 text-xs font-medium">Manage your own delivery team for localized fulfillment.</p>
-                          </div>
-                        </div>
-                        <div className="relative z-10">
-                          <button 
-                            onClick={() => handleToggle('inHouseRiderEnabled')}
-                            className={`w-14 h-7 rounded-full relative transition-all ${formData.inHouseRiderEnabled ? 'bg-indigo-500' : 'bg-slate-500/50'}`}
-                          >
-                            <div className={`w-5 h-5 bg-white rounded-full absolute top-1 shadow-sm transition-all ${formData.inHouseRiderEnabled ? 'left-8' : 'left-1'}`} />
-                          </button>
-                        </div>
-                      </div>
 
-                      {formData.inHouseRiderEnabled && (
-                        <div className="space-y-6 pt-4 animate-in slide-in-from-top-2 duration-300 border-t border-slate-50">
-                          <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Partner Integrations</h4>
-                          <div className="grid grid-cols-1 gap-4">
-                            {[
-                              { name: 'ELT riders', logo: 'ELT' },
-                              { name: 'Dunzo riders', logo: 'DZ' },
-                              { name: 'Wefast riders', logo: 'WF' }
-                            ].map(rider => (
-                              <div key={rider.name} className="flex items-center justify-between p-5 rounded-2xl border border-slate-100 hover:border-indigo-100 hover:bg-indigo-50/20 transition-all duration-300">
-                                <div className="flex items-center gap-5">
-                                  <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center font-black text-slate-400 text-xs">{rider.logo}</div>
-                                  <div>
-                                    <h4 className="text-sm font-bold text-slate-800">{rider.name}</h4>
-                                    <p className="text-[11px] text-slate-400 font-medium">External rider fleet API integration</p>
+                          {formData.inHouseRiderEnabled && (
+                            <div className="space-y-6 pt-4 animate-in slide-in-from-top-2 duration-300 border-t border-slate-50">
+                              <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Partner Integrations</h4>
+                              <div className="grid grid-cols-1 gap-4">
+                                {[
+                                  { name: 'ELT riders', logo: 'ELT' },
+                                  { name: 'Dunzo riders', logo: 'DZ' },
+                                  { name: 'Wefast riders', logo: 'WF' }
+                                ].map(rider => (
+                                  <div key={rider.name} className="flex items-center justify-between p-5 rounded-2xl border border-slate-100 hover:border-indigo-100 hover:bg-indigo-50/20 transition-all duration-300">
+                                    <div className="flex items-center gap-5">
+                                      <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center font-black text-slate-400 text-xs">{rider.logo}</div>
+                                      <div>
+                                        <h4 className="text-sm font-bold text-slate-800">{rider.name}</h4>
+                                        <p className="text-[11px] text-slate-400 font-medium">External rider fleet API integration</p>
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                      <button className="px-4 py-2 text-indigo-600 text-[10px] font-black uppercase tracking-widest hover:bg-indigo-50 rounded-lg transition-colors">Configure</button>
+                                      <div className="w-px h-4 bg-slate-200" />
+                                      <button className="px-4 py-2 text-slate-400 text-[10px] font-black uppercase tracking-widest hover:text-indigo-600 transition-colors">Connect</button>
+                                    </div>
                                   </div>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                  <button className="px-4 py-2 text-indigo-600 text-[10px] font-black uppercase tracking-widest hover:bg-indigo-50 rounded-lg transition-colors">Configure</button>
-                                  <div className="w-px h-4 bg-slate-200" />
-                                  <button className="px-4 py-2 text-slate-400 text-[10px] font-black uppercase tracking-widest hover:text-indigo-600 transition-colors">Connect</button>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      ) : (
+                        <div className="space-y-6 animate-in slide-in-from-right-4 duration-300">
+                          <div className="flex items-center justify-between p-6 rounded-2xl bg-emerald-50 border border-emerald-100">
+                            <div className="flex items-center gap-4">
+                              <div className="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                                <Timer className="w-6 h-6 text-emerald-600" />
+                              </div>
+                              <div>
+                                <h3 className="text-sm font-bold text-slate-800">Auto Assignment Engine</h3>
+                                <p className="text-[11px] text-slate-500 font-medium">Automatically dispatch orders to available riders.</p>
+                              </div>
+                            </div>
+                            <button 
+                              onClick={() => handleToggle('autoAssignmentEnabled')}
+                              className={`w-14 h-7 rounded-full relative transition-all ${formData.autoAssignmentEnabled ? 'bg-emerald-500' : 'bg-slate-300'}`}
+                            >
+                              <div className={`w-5 h-5 bg-white rounded-full absolute top-1 shadow-sm transition-all ${formData.autoAssignmentEnabled ? 'left-8' : 'left-1'}`} />
+                            </button>
+                          </div>
+
+                          {formData.autoAssignmentEnabled && (
+                            <div className="space-y-6 pt-4 border-t border-slate-50">
+                              <div className="space-y-4">
+                                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Assignment Strategy</label>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                  {['Nearest Rider First', 'Round Robin', 'Lowest Active Orders', 'Batching Mode'].map(strategy => (
+                                    <label key={strategy} className={`flex items-center gap-3 p-4 rounded-xl border transition-all cursor-pointer ${formData.autoAssignStrategy === strategy ? 'bg-emerald-50/50 border-emerald-200 shadow-sm' : 'bg-white border-slate-100 hover:border-slate-200'}`}>
+                                      <input 
+                                        type="radio" 
+                                        name="autoAssignStrategy"
+                                        checked={formData.autoAssignStrategy === strategy} 
+                                        onChange={() => setFormData(p => ({...p, autoAssignStrategy: strategy}))} 
+                                        className="w-4 h-4 text-emerald-600 focus:ring-emerald-500 border-slate-300" 
+                                      />
+                                      <span className={`text-sm font-bold ${formData.autoAssignStrategy === strategy ? 'text-emerald-700' : 'text-slate-600'}`}>{strategy}</span>
+                                    </label>
+                                  ))}
                                 </div>
                               </div>
-                            ))}
-                          </div>
+
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-2">
+                                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Assign After (Minutes)</label>
+                                  <input 
+                                    type="number" 
+                                    name="autoAssignDelay" 
+                                    value={formData.autoAssignDelay} 
+                                    onChange={handleChange} 
+                                    className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:bg-white focus:border-emerald-300 transition-all" 
+                                  />
+                                </div>
+                                <div className="space-y-2">
+                                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Max Orders Per Rider</label>
+                                  <input 
+                                    type="number" 
+                                    name="maxOrdersPerRider" 
+                                    value={formData.maxOrdersPerRider} 
+                                    onChange={handleChange} 
+                                    className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-bold text-slate-700 outline-none focus:bg-white focus:border-emerald-300 transition-all" 
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>

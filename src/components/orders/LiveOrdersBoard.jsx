@@ -85,10 +85,10 @@ export default function LiveOrdersBoard() {
   const finalTotal = subtotalAfterDiscount + cgst + sgst + deliveryCharge + packagingCharge;
 
   return (
-    <div className="flex h-full bg-background relative overflow-hidden">
+    <div className="flex h-full bg-background relative overflow-hidden flex-col md:flex-row">
       
       {/* Left Panel: Order List */}
-      <div className="w-1/3 min-w-[350px] border-r border-border bg-card flex flex-col z-10 shadow-sm">
+      <div className={`${selectedOrder ? 'hidden md:flex' : 'flex'} w-full md:w-1/3 md:min-w-[350px] border-r border-border bg-card flex-col z-10 shadow-sm`}>
         <div className="p-4 border-b border-border shrink-0">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-bold">Live Orders</h2>
@@ -187,12 +187,18 @@ export default function LiveOrdersBoard() {
       </div>
 
       {/* Right Panel: Order Details */}
-      <div className="flex-1 bg-background overflow-hidden flex flex-col relative">
+      <div className={`${selectedOrder ? 'flex' : 'hidden md:flex'} flex-1 bg-background overflow-hidden flex-col relative`}>
         {selectedOrder ? (
           <>
             {/* Header */}
-            <div className="flex items-center justify-between p-6 border-b border-border bg-card shrink-0 shadow-sm z-10">
+            <div className="flex items-center justify-between p-4 md:p-6 border-b border-border bg-card shrink-0 shadow-sm z-10">
               <div>
+                <button 
+                  onClick={() => setSelectedOrder(null)}
+                  className="text-sm font-bold text-primary mb-2 flex items-center gap-1 md:hidden"
+                >
+                  ← Back to Orders
+                </button>
                 <div className="flex items-center gap-3 mb-1">
                   <h2 className="text-3xl font-black">{selectedOrder.id}</h2>
                   <span className={`text-xs px-3 py-1 rounded-md uppercase tracking-wider font-bold ${selectedOrder.type === 'Delivery' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>

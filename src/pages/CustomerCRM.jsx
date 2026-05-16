@@ -89,9 +89,9 @@ export default function CustomerCRM() {
   };
 
   return (
-    <div className="flex h-full">
+    <div className="flex h-full flex-col md:flex-row">
       {/* Left Panel: Directory */}
-      <div className="w-1/3 border-r border-border bg-background flex flex-col">
+      <div className={`${selectedCustomer ? 'hidden md:flex' : 'flex'} w-full md:w-1/3 border-r border-border bg-background flex-col`}>
         <div className="p-4 border-b border-border">
           <h2 className="text-lg font-bold mb-4">Customer Directory</h2>
           <div className="relative">
@@ -130,13 +130,20 @@ export default function CustomerCRM() {
       </div>
 
       {/* Right Panel: Profile */}
-      <div className="flex-1 bg-card overflow-y-auto">
+      <div className={`${selectedCustomer ? 'flex' : 'hidden md:flex'} flex-1 bg-card overflow-y-auto flex-col`}>
         {selectedCustomer ? (
-          <div className="p-6 max-w-3xl mx-auto">
+          <div className="p-4 md:p-6 max-w-3xl mx-auto w-full">
             {/* Customer Header */}
-            <div className="flex justify-between items-start mb-6">
+            <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-6">
               <div>
-                <h2 className="text-2xl font-bold">{selectedCustomer.name}</h2>
+                {/* Mobile back button */}
+                <button 
+                  onClick={() => setSelectedCustomer(null)}
+                  className="text-sm font-bold text-primary mb-3 flex items-center gap-1 md:hidden"
+                >
+                  ← Back to Directory
+                </button>
+                <h2 className="text-xl md:text-2xl font-bold">{selectedCustomer.name}</h2>
                 <p className="text-muted-foreground mt-1">{selectedCustomer.phone} • Customer since 2024</p>
                 <div className="flex gap-2 mt-3">
                   <span className="px-2 py-1 bg-primary/10 text-primary text-xs font-bold rounded uppercase">{selectedCustomer.segment}</span>
@@ -159,7 +166,7 @@ export default function CustomerCRM() {
             </div>
 
             {/* Stats Cards */}
-            <div className="grid grid-cols-4 gap-4 mb-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
               <div className="p-4 bg-background border border-border rounded-lg text-center">
                 <div className="text-muted-foreground text-xs font-medium uppercase mb-1">Total Spend</div>
                 <div className="text-xl font-bold">{selectedCustomer.ltv}</div>
@@ -183,7 +190,7 @@ export default function CustomerCRM() {
               <h3 className="text-sm font-bold text-foreground mb-4 flex items-center gap-2 uppercase tracking-wider">
                 <User className="w-4 h-4 text-primary" /> Customer Details
               </h3>
-              <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 md:gap-x-8 gap-y-3">
                 <div className="flex items-start gap-3">
                   <Phone className="w-4 h-4 text-muted-foreground mt-0.5 shrink-0" />
                   <div>

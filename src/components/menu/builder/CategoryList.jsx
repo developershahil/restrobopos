@@ -46,7 +46,7 @@ function SortableCategoryItem({ cat, isSelected, itemCount, allActive, onSelect,
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity relative">
+      <div className="flex items-center gap-1 mt-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity relative">
         <button
           onClick={(e) => { e.stopPropagation(); onToggle(cat.id, !isAllActive); }}
           title={isAllActive ? 'Mark all Out of Stock' : 'Mark all In Stock'}
@@ -92,7 +92,7 @@ function SortableCategoryItem({ cat, isSelected, itemCount, allActive, onSelect,
   );
 }
 
-export default function CategoryList() {
+export default function CategoryList({ onMobileSelect }) {
   const {
     categories, addCategory, updateCategory, deleteCategory, bulkToggleCategory,
     selectedCategoryId, setSelectedCategoryId, items, moveCategory, reorderCategory
@@ -118,7 +118,7 @@ export default function CategoryList() {
   };
 
   return (
-    <div className="w-56 shrink-0 border-r border-border bg-card flex flex-col h-full">
+    <div className="w-full md:w-56 md:shrink-0 md:border-r border-border bg-card flex flex-col h-full">
       {/* Header */}
       <div className="flex flex-col border-b border-border">
         <div className="flex items-center justify-between px-4 py-3">
@@ -161,7 +161,7 @@ export default function CategoryList() {
                 isSelected={cat.id === selectedCategoryId}
                 itemCount={itemCount}
                 allActive={allActive}
-                onSelect={setSelectedCategoryId}
+                onSelect={(id) => { setSelectedCategoryId(id); onMobileSelect?.(); }}
                 onEdit={(c) => setModal({ mode: 'edit', cat: c })}
                 onDelete={(c) => setModal({ mode: 'delete', cat: c })}
                 onMove={moveCategory}

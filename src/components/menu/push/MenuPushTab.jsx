@@ -60,10 +60,10 @@ export default function MenuPushTab() {
   };
 
   return (
-    <div className="flex h-full bg-background overflow-hidden">
+    <div className="flex h-full bg-background overflow-hidden flex-col md:flex-row">
       
       {/* LEFT PANEL: CONFIGURATION */}
-      <div className="w-1/2 p-6 border-r border-border overflow-y-auto custom-scrollbar flex flex-col">
+      <div className="w-full md:w-1/2 p-4 md:p-6 md:border-r border-b md:border-b-0 border-border overflow-y-auto custom-scrollbar flex flex-col">
         <div className="mb-6">
           <h2 className="text-lg font-bold text-foreground">Deploy Menu Updates</h2>
           <p className="text-sm text-muted-foreground mt-1">
@@ -209,10 +209,10 @@ export default function MenuPushTab() {
       </div>
 
       {/* RIGHT PANEL: QUEUE & HISTORY */}
-      <div className="w-1/2 flex flex-col bg-muted/10 border-l border-border">
+      <div className="w-full md:w-1/2 flex flex-col bg-muted/10 md:border-l border-border">
         
         {/* Pending Queue */}
-        <div className="flex-1 p-6 border-b border-border overflow-y-auto custom-scrollbar">
+        <div className="flex-1 p-4 md:p-6 border-b border-border overflow-y-auto custom-scrollbar">
           <h3 className="text-sm font-bold uppercase tracking-wider text-foreground mb-4">Scheduled Pushes</h3>
           
           {scheduledPushes.length === 0 ? (
@@ -251,7 +251,7 @@ export default function MenuPushTab() {
         </div>
 
         {/* History */}
-        <div className="flex-1 p-6 overflow-y-auto custom-scrollbar">
+        <div className="flex-1 p-4 md:p-6 overflow-y-auto custom-scrollbar">
           <h3 className="text-sm font-bold uppercase tracking-wider text-foreground mb-4">Deployment History</h3>
           
           <div className="space-y-3">

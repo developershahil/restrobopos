@@ -230,73 +230,73 @@ export default function FailedOrdersTable() {
           </div>
         </div>
 
+import EmptyState from '../EmptyState';
+
         {/* Table Area */}
         <div className="flex-1 overflow-auto bg-card">
-          <table className="w-full text-sm text-left">
-            <thead className="text-xs text-muted-foreground uppercase bg-muted/50 sticky top-0 z-10 shadow-sm backdrop-blur-md">
-              <tr>
-                <th className="px-6 py-4 font-bold tracking-wider">Order & Customer</th>
-                <th className="px-6 py-4 font-bold tracking-wider">Failure Forensics</th>
-                <th className="px-6 py-4 font-bold tracking-wider">Accountability</th>
-                <th className="px-6 py-4 font-bold tracking-wider text-right">Financial Impact</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {filteredOrders.length > 0 ? filteredOrders.map(order => (
-                <tr 
-                  key={order.id} 
-                  onClick={() => setSelectedOrder(order)}
-                  className={`hover:bg-muted/50 cursor-pointer transition-colors ${selectedOrder?.id === order.id ? 'bg-primary/5' : ''}`}
-                >
-                  <td className="px-6 py-4">
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center gap-2">
-                        <span className="font-black text-base">{order.id}</span>
-                        <span className="text-[10px] font-bold bg-muted px-2 py-0.5 rounded text-muted-foreground uppercase">{order.type}</span>
-                      </div>
-                      <span className="font-bold text-foreground">{order.customer}</span>
-                      <span className="text-xs text-muted-foreground">{order.date}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-col gap-2 items-start">
-                      <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold border ${getCategoryColor(order.category)}`}>
-                        {getCategoryIcon(order.category)} {order.category}
-                      </span>
-                      <span className="text-sm font-semibold">{order.reason}</span>
-                      <span className="text-xs text-muted-foreground border border-border rounded bg-background px-2 py-0.5">Stage: {order.stage}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-col gap-1">
-                      <span className="font-bold">{order.accountability}</span>
-                      <span className="text-xs text-red-500 font-medium">{order.sla}</span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <div className="flex flex-col gap-1 items-end">
-                      <span className="font-black text-red-600 text-base">-${order.financials.lostRevenue.toFixed(2)}</span>
-                      {order.financials.refundAmount > 0 && (
-                        <span className="text-xs font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded border border-green-200">
-                          Refunded: ${order.financials.refundAmount.toFixed(2)}
-                        </span>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              )) : (
+          {filteredOrders.length > 0 ? (
+            <table className="w-full text-sm text-left">
+              <thead className="text-xs text-muted-foreground uppercase bg-muted/50 sticky top-0 z-10 shadow-sm backdrop-blur-md">
                 <tr>
-                  <td colSpan="4" className="px-6 py-12 text-center text-muted-foreground">
-                    <div className="flex flex-col items-center justify-center">
-                      <XOctagon className="w-12 h-12 mb-4 text-muted-foreground/30" />
-                      <p className="text-lg font-bold text-foreground mb-1">No failed orders found</p>
-                      <p className="text-sm">Try adjusting your filters or search terms.</p>
-                    </div>
-                  </td>
+                  <th className="px-6 py-4 font-bold tracking-wider">Order & Customer</th>
+                  <th className="px-6 py-4 font-bold tracking-wider">Failure Forensics</th>
+                  <th className="px-6 py-4 font-bold tracking-wider">Accountability</th>
+                  <th className="px-6 py-4 font-bold tracking-wider text-right">Financial Impact</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-border">
+                {filteredOrders.map(order => (
+                  <tr 
+                    key={order.id} 
+                    onClick={() => setSelectedOrder(order)}
+                    className={`hover:bg-muted/50 cursor-pointer transition-colors ${selectedOrder?.id === order.id ? 'bg-primary/5' : ''}`}
+                  >
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2">
+                          <span className="font-black text-base">{order.id}</span>
+                          <span className="text-[10px] font-bold bg-muted px-2 py-0.5 rounded text-muted-foreground uppercase">{order.type}</span>
+                        </div>
+                        <span className="font-bold text-foreground">{order.customer}</span>
+                        <span className="text-xs text-muted-foreground">{order.date}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col gap-2 items-start">
+                        <span className={`flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-bold border ${getCategoryColor(order.category)}`}>
+                          {getCategoryIcon(order.category)} {order.category}
+                        </span>
+                        <span className="text-sm font-semibold">{order.reason}</span>
+                        <span className="text-xs text-muted-foreground border border-border rounded bg-background px-2 py-0.5">Stage: {order.stage}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex flex-col gap-1">
+                        <span className="font-bold">{order.accountability}</span>
+                        <span className="text-xs text-red-500 font-medium">{order.sla}</span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex flex-col gap-1 items-end">
+                        <span className="font-black text-red-600 text-base">-${order.financials.lostRevenue.toFixed(2)}</span>
+                        {order.financials.refundAmount > 0 && (
+                          <span className="text-xs font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded border border-green-200">
+                            Refunded: ${order.financials.refundAmount.toFixed(2)}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <EmptyState 
+              icon={XOctagon} 
+              title="No failed orders found" 
+              description="Everything is running smoothly! Try adjusting your filters or search terms if you're looking for something specific." 
+            />
+          )}
         </div>
       </div>
 

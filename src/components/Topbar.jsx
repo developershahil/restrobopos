@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Bike, Package, Utensils, Maximize, Minimize, Save, X, Settings as SettingsIcon } from 'lucide-react';
+import { Bike, Package, Utensils, Maximize, Minimize, Save, X, Settings as SettingsIcon, Menu as MenuIcon } from 'lucide-react';
 
 export default function Topbar({ 
   activeBrand, 
@@ -12,7 +12,8 @@ export default function Topbar({
   isSettingsOpen,
   onToggleSettings,
   settingsRef,
-  SettingsDropdown
+  SettingsDropdown,
+  onOpenMobileSidebar
 }) {
   const [masterSwitch, setMasterSwitch] = useState(true);
   const [deliverySwitch, setDeliverySwitch] = useState(true);
@@ -25,6 +26,11 @@ export default function Topbar({
       {/* Left: Brand, Outlet & Master Switch */}
       <div className="flex items-center gap-2 sm:gap-4">
         
+        {/* Mobile Hamburger */}
+        <button onClick={onOpenMobileSidebar} className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground md:hidden shrink-0">
+          <MenuIcon className="w-5 h-5" />
+        </button>
+
         {/* Current Brand Context */}
         <div className="flex items-center gap-2 px-2.5 py-1.5 bg-primary/10 border border-primary/20 rounded-md shrink-0 transition-all duration-300 cursor-pointer hover:bg-primary/20" onClick={onOpenSwitchModal}>
           <div className={`w-5 h-5 rounded ${activeBrand.color} flex items-center justify-center text-white font-black text-[10px] shadow-sm transition-colors duration-300`}>

@@ -25,5 +25,10 @@ dist-ssr
 
 # Assets
 *.mp4
+*.webp
+*.webm
+*.avi
+*.mov
 videos/
 memory/
+recordings/

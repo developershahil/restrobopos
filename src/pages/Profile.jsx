@@ -23,30 +23,30 @@ export default function Profile() {
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
         {/* Sidebar Navigation */}
-        <div className="w-64 border-r border-border bg-background p-4 flex flex-col gap-2 shrink-0 overflow-y-auto">
+        <div className="w-full md:w-64 border-b md:border-b-0 md:border-r border-border bg-background p-4 flex flex-row md:flex-col gap-2 shrink-0 overflow-x-auto md:overflow-y-auto scrollbar-hide">
           <button 
             onClick={() => setActiveTab('personal')}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'personal' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all whitespace-nowrap ${activeTab === 'personal' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
           >
             <User className="w-4 h-4" /> Personal Info
           </button>
           <button 
             onClick={() => setActiveTab('security')}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'security' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all whitespace-nowrap ${activeTab === 'security' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
           >
             <Shield className="w-4 h-4" /> Security
           </button>
           <button 
             onClick={() => setActiveTab('notifications')}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'notifications' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all whitespace-nowrap ${activeTab === 'notifications' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
           >
             <Bell className="w-4 h-4" /> Notifications
           </button>
           <button 
             onClick={() => setActiveTab('sessions')}
-            className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${activeTab === 'sessions' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all whitespace-nowrap ${activeTab === 'sessions' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`}
           >
             <MonitorSmartphone className="w-4 h-4" /> Active Sessions
           </button>

@@ -82,8 +82,8 @@ export default function OfferList({ onAddOffer, onEditOffer }) {
   return (
     <div className="space-y-6">
       {/* Tabs + Add Offer */}
-      <div className="flex items-center justify-between">
-        <div className="flex gap-1">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="flex gap-1 overflow-x-auto w-full sm:w-auto scrollbar-hide">
           {TABS.map(tab => (
             <button
               key={tab}
@@ -136,7 +136,7 @@ export default function OfferList({ onAddOffer, onEditOffer }) {
       <div className="bg-card border border-border rounded-xl shadow-sm">
         {/* Outlet Filter */}
         <div className="p-4 border-b border-border">
-          <div className="relative inline-block w-72">
+          <div className="relative inline-block w-full sm:w-72">
             <div className="flex items-center gap-2 bg-background border border-border px-4 py-2.5 rounded-lg hover:border-primary/50 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary transition-all">
               <Store className="w-4 h-4 text-muted-foreground shrink-0" />
               <select

@@ -70,8 +70,8 @@ function SortableItemRow({ item, isSelected, onSelect, onToggleStock, onSnooze, 
         </div>
       </div>
 
-      {/* Actions (visible on hover) */}
-      <div className="flex items-center gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity relative">
+      {/* Actions (visible on hover on desktop, always on mobile) */}
+      <div className="flex items-center gap-1 mt-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity relative">
         <button
           onClick={(e) => { 
             e.stopPropagation(); 
@@ -132,7 +132,7 @@ function SortableItemRow({ item, isSelected, onSelect, onToggleStock, onSnooze, 
   );
 }
 
-export default function ItemList() {
+export default function ItemList({ onMobileSelect }) {
   const {
     items, addItem, updateItem, deleteItem, duplicateItem, toggleItemStock, snoozeItem,
     selectedCategoryId, categories,
@@ -171,7 +171,7 @@ export default function ItemList() {
   };
 
   return (
-    <div className="w-72 shrink-0 border-r border-border bg-background flex flex-col h-full">
+    <div className="w-full md:w-72 md:shrink-0 md:border-r border-border bg-background flex flex-col h-full">
       {/* Header */}
       <div className="px-4 py-3 border-b border-border">
         <div className="flex items-center justify-between mb-2.5">
@@ -249,7 +249,7 @@ export default function ItemList() {
                   key={item.id}
                   item={item}
                   isSelected={item.id === selectedItemId}
-                  onSelect={setSelectedItemId}
+                  onSelect={(id) => { setSelectedItemId(id); onMobileSelect?.(); }}
                   onToggleStock={toggleItemStock}
                   onSnooze={setSnoozeItemId}
                   onDuplicate={duplicateItem}

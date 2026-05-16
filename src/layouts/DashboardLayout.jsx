@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { 
   Maximize, Minimize, Settings as SettingsIcon, LayoutDashboard, Server, 
-  ChevronRight, Save, X, Sun, Moon, Monitor, Palette
+  ChevronRight, Save, X, Sun, Moon, Monitor, Palette, Menu as MenuIcon
 } from 'lucide-react';
 import Sidebar from '../components/Sidebar';
 import Topbar from '../components/Topbar';
@@ -23,7 +23,13 @@ export default function DashboardLayout() {
   const [theme, setTheme] = useState('light'); // 'light' | 'dark' | 'system'
   const [isDirty, setIsDirty] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const settingsRef = useRef(null);
+
+  // Close mobile sidebar on route change
+  useEffect(() => {
+    setIsMobileSidebarOpen(false);
+  }, [location.pathname]);
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -123,6 +129,8 @@ export default function DashboardLayout() {
       <Sidebar 
         onOpenSwitchModal={() => setIsSwitchModalOpen(true)} 
         activeBrand={activeBrand}
+        isMobileOpen={isMobileSidebarOpen}
+        onMobileClose={() => setIsMobileSidebarOpen(false)}
       />
       <div className="flex flex-col flex-1 overflow-hidden relative">
         {isDashboard ? (
@@ -138,25 +146,33 @@ export default function DashboardLayout() {
             onToggleSettings={() => setIsSettingsOpen(!isSettingsOpen)}
             settingsRef={settingsRef}
             SettingsDropdown={SettingsDropdown}
+            onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
           />
         ) : (
-          <header className="h-12 bg-card border-b border-border flex items-center justify-between px-6 shrink-0 z-40 shadow-sm">
+          <header className="h-12 bg-card border-b border-border flex items-center justify-between px-4 md:px-6 shrink-0 z-40 shadow-sm">
             <div className="flex items-center gap-2">
-               <span className="text-xs font-black text-muted-foreground uppercase tracking-widest opacity-60">System</span>
-               <ChevronRight size={12} className="text-muted-foreground/40" />
+               {/* Mobile hamburger */}
+               <button 
+                 onClick={() => setIsMobileSidebarOpen(true)} 
+                 className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground md:hidden"
+               >
+                 <MenuIcon className="w-5 h-5" />
+               </button>
+               <span className="text-xs font-black text-muted-foreground uppercase tracking-widest opacity-60 hidden sm:inline">System</span>
+               <ChevronRight size={12} className="text-muted-foreground/40 hidden sm:inline" />
                <span className="text-sm font-black text-foreground capitalize">{pageTitle}</span>
             </div>
             
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 md:gap-4">
               {isDirty && (
                 <div className="flex items-center gap-2 animate-in fade-in slide-in-from-right-4 duration-300">
-                  <button onClick={handleDiscard} className="flex items-center gap-2 px-3 py-1 text-xs font-bold text-muted-foreground hover:bg-muted rounded-lg">
-                    <X size={14} /> Discard
+                  <button onClick={handleDiscard} className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 text-xs font-bold text-muted-foreground hover:bg-muted rounded-lg">
+                    <X size={14} /> <span className="hidden sm:inline">Discard</span>
                   </button>
-                  <button onClick={handleSave} className="flex items-center gap-2 px-3 py-1 text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg shadow-sm">
-                    <Save size={14} /> Save
+                  <button onClick={handleSave} className="flex items-center gap-1 md:gap-2 px-2 md:px-3 py-1 text-xs font-bold bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg shadow-sm">
+                    <Save size={14} /> <span className="hidden sm:inline">Save</span>
                   </button>
-                  <div className="w-px h-4 bg-border mx-2"></div>
+                  <div className="w-px h-4 bg-border mx-1 md:mx-2 hidden sm:block"></div>
                 </div>
               )}
 
@@ -172,7 +188,7 @@ export default function DashboardLayout() {
 
               <button 
                 onClick={toggleFullscreen}
-                className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
+                className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-all hidden sm:block"
               >
                 {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
               </button>

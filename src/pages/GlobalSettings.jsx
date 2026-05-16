@@ -113,15 +113,15 @@ export default function GlobalSettings() {
 
   return (
     <div className="flex flex-col h-full bg-muted/10 overflow-hidden">
-      <div className="flex-1 flex overflow-hidden">
-        {/* Sidebar Tabs */}
-        <div className="w-64 bg-card border-r border-border overflow-y-auto shrink-0 py-6 px-4 hidden md:block">
-          <div className="space-y-1">
+      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
+        {/* Sidebar Tabs — horizontal scroll on mobile, vertical on desktop */}
+        <div className="md:w-64 bg-card md:border-r border-b md:border-b-0 border-border overflow-x-auto md:overflow-y-auto shrink-0 md:py-6 md:px-4">
+          <div className="flex md:flex-col gap-1 px-3 md:px-0 py-2 md:py-0">
             {TABS.map(tab => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
+                className={`flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap md:whitespace-normal shrink-0 md:shrink md:w-full ${
                   activeTab === tab.id 
                     ? 'bg-primary/10 text-primary' 
                     : 'text-muted-foreground hover:bg-muted hover:text-foreground'
@@ -264,7 +264,7 @@ export default function GlobalSettings() {
                     </div>
                   </div>
                   <div className="p-6 space-y-6">
-                    <div className="grid grid-cols-2 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
                       <div className="space-y-1.5">
                         <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Twilio Account SID</label>
                         <input 
@@ -297,7 +297,7 @@ export default function GlobalSettings() {
                     </div>
                   </div>
                   <div className="p-6 space-y-6">
-                    <div className="grid grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
                       <div className="col-span-2 space-y-1.5">
                         <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">SMTP Host</label>
                         <input type="text" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-lg text-sm font-medium outline-none focus:border-primary" placeholder="smtp.gmail.com" onChange={() => setIsDirty(true)} />
@@ -321,7 +321,7 @@ export default function GlobalSettings() {
                     <input type="text" placeholder="Search outlets..." className="w-full pl-9 pr-4 py-1.5 bg-card border border-border rounded-lg text-sm outline-none focus:border-primary" />
                   </div>
                 </div>
-                <div className="bg-card border border-border rounded-2xl overflow-hidden">
+                <div className="bg-card border border-border rounded-2xl overflow-x-auto">
                   <table className="w-full text-left">
                     <thead>
                       <tr className="bg-muted/20 border-b border-border">
