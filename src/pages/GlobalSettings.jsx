@@ -1,402 +1,824 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { 
-  Plus, Store, Building2, MoreVertical, X, ChevronRight, Search, 
-  Settings, Save, PaintBucket, ToggleLeft, Gift, CreditCard, 
-  Bell, Receipt, FileText, AppWindow, Key, Map, MessageSquare, Mail, ShieldCheck, LayoutDashboard, Server
+  Settings, Palette, MessageSquare, MapPin, Languages, Info, Phone, 
+  FileText, Wallet, UtensilsCrossed, Crown, ShieldCheck, 
+  Plus, X, ChevronRight, Save, Trash2, Globe, Check, Image as ImageIcon,
+  ChevronDown, Search, AlertCircle
 } from 'lucide-react';
 
-const INITIAL_TENANTS = [
-  {
-    id: 't1',
-    name: 'Burger King Master',
-    owner: 'John Doe',
-    email: 'john@bk.com',
-    status: 'Active',
-    outlets: [
-      { id: 'o1', name: 'Koramangala Branch', city: 'Bangalore', status: 'Active' },
-      { id: 'o2', name: 'Indiranagar Branch', city: 'Bangalore', status: 'Active' },
-    ]
-  },
-  {
-    id: 't2',
-    name: 'Pizza Hut Global',
-    owner: 'Jane Smith',
-    email: 'jane@ph.com',
-    status: 'Active',
-    outlets: [
-      { id: 'o3', name: 'Whitefield Branch', city: 'Bangalore', status: 'Active' },
-    ]
-  }
-];
-
-const TABS = [
-  { id: 'overview', label: 'Overview', icon: LayoutDashboard },
-  { id: 'restaurants', label: 'Restaurants', icon: Building2 },
-  { id: 'outlets', label: 'Outlets', icon: Store },
-  { id: 'branding', label: 'Brand & Theme', icon: PaintBucket },
-  { id: 'toggles', label: 'Feature Toggles', icon: ToggleLeft },
-  { id: 'credentials', label: 'API & Credentials', icon: Key },
+const SECTIONS = [
+  { id: 'app', label: 'App Settings', icon: Settings },
+  { id: 'brand', label: 'Brand', icon: Palette },
+  { id: 'sms', label: 'SMS Gateway', icon: MessageSquare },
+  { id: 'maps', label: 'Maps', icon: MapPin },
+  { id: 'languages', label: 'Languages', icon: Languages },
+  { id: 'about', label: 'About Us', icon: Info },
+  { id: 'contact', label: 'Contact Us', icon: Phone },
+  { id: 'legal', label: 'Legal', icon: FileText },
+  { id: 'cashback', label: 'Cashback Settings', icon: Wallet },
+  { id: 'ordering', label: 'Ordering Mode', icon: UtensilsCrossed },
+  { id: 'membership', label: 'Club Membership', icon: Crown },
+  { id: 'login', label: 'Login Restrictions', icon: ShieldCheck },
 ];
 
 export default function GlobalSettings() {
-  const { theme, setTheme, isDirty, setIsDirty } = useOutletContext();
-  const [activeTab, setActiveTab] = useState('overview');
-  const [tenants, setTenants] = useState(INITIAL_TENANTS);
-  const [showResModal, setShowResModal] = useState(false);
-  const [showOutletModal, setShowOutletModal] = useState(false);
-  const [selectedTenant, setSelectedTenant] = useState(null);
-
-  const [newRes, setNewRes] = useState({ name: '', owner: '', email: '', package: 'Standard' });
-  const [newOutlet, setNewOutlet] = useState({ name: '', city: '', address: '', contact: '' });
-
-  const [brandData, setBrandData] = useState({
-    brandName: 'Restrobopos Master',
-    primaryColor: '#eb5e28',
-    secondaryColor: '#f5ebe0',
-    loyalty: true,
-    membership: false,
-    wallet: true,
-  });
-
-  const [credentials, setCredentials] = useState({
-    googleMapsKey: '',
-    googleAuthClientId: '',
-    firebaseConfig: '',
-    twilioSid: '',
-    twilioToken: '',
-    smtpHost: '',
-    smtpPort: '587',
-    smtpUser: '',
-    smtpPass: '',
-  });
-
-  const handleCreateRestaurant = () => {
-    const res = {
-      id: 't' + (tenants.length + 1),
-      name: newRes.name,
-      owner: newRes.owner,
-      email: newRes.email,
-      status: 'Active',
-      outlets: []
-    };
-    setTenants([...tenants, res]);
-    setShowResModal(false);
-    setNewRes({ name: '', owner: '', email: '', package: 'Standard' });
-    setIsDirty(true);
-  };
-
-  const handleCreateOutlet = () => {
-    if (!selectedTenant) return;
-    const updatedTenants = tenants.map(t => {
-      if (t.id === selectedTenant.id) {
-        return {
-          ...t,
-          outlets: [
-            ...t.outlets,
-            { id: 'o' + Date.now(), name: newOutlet.name, city: newOutlet.city, status: 'Active' }
-          ]
-        };
+  useOutletContext(); // keep context connection for layout
+  const [isPageDirty, setIsPageDirty] = useState(false);
+  const [activeSection, setActiveSection] = useState('app');
+  
+  // Master State
+  const [settings, setSettings] = useState({
+    app: {
+      restaurantName: 'La milano',
+      displayName: 'La Milano POS',
+      emailCompulsory: true,
+      categoryMask: false,
+      logoHeight: 40,
+      splashScreen: {
+        type: 'Static Logo',
+        value: null
+      },
+      offerUsageTime: 30,
+      ratingPopup: true,
+      showSaveBadge: true
+    },
+    brand: {
+      logo: null,
+      footerLogo: null,
+      primaryColor: '#eb5e28',
+      secondaryColor: '#f5ebe0',
+      greeting: 'Welcome to our store!',
+      specialInstruction: 'Please add any special requests here.',
+      social: {
+        enabled: true,
+        instagram: '',
+        facebook: '',
+        x: '',
+        linkedin: '',
+        youtube: ''
+      },
+      showNewOutletBanner: false,
+      membershipActive: true,
+      showEnquiryBanner: false,
+      enquiryBannerImage: null
+    },
+    sms: {
+      twoFactorApiKey: ''
+    },
+    maps: {
+      googleApiKey: ''
+    },
+    languages: ['English', 'Hindi'],
+    legal: {
+      aboutUs: '',
+      contactUs: '',
+      privacyPolicy: '',
+      terms: ''
+    },
+    cashback: {
+      enabled: true,
+      earningPercentage: 5,
+      expirationDays: 30,
+      signupBonus: 50,
+      advance: {
+        sameForAllModes: true,
+        redeemPercentage: 10,
+        consolidateOffers: false
+      },
+      delay: {
+        sameForAllModes: true,
+        delivery: { hours: 1, mins: 0 },
+        takeaway: { hours: 0, mins: 30 }
       }
-      return t;
-    });
-    setTenants(updatedTenants);
-    setShowOutletModal(false);
-    setNewOutlet({ name: '', city: '', address: '', contact: '' });
-    setIsDirty(true);
+    },
+    orderingMode: [
+      { id: 1, name: 'Dine In', type: 'Fine Dine', orderTab: 'DSR', status: true },
+      { id: 2, name: 'Takeaway', type: 'DSR', orderTab: 'TKY', status: true },
+    ],
+    clubMembership: {
+      enabled: true,
+      outlets: [],
+      logo: null,
+      badge: null,
+      savingsIcon: null,
+      pricePeriod: 'Monthly',
+      price: 99,
+      comparePrice: 199,
+      name: 'Gold Member',
+      exclusivePrice: {
+        enabled: true,
+        discount: 10,
+        applicability: 'All'
+      },
+      fees: {
+        delivery: true,
+        packaging: false,
+        convenience: false
+      },
+      advancedSelection: []
+    },
+    loginRestrictions: {
+      singleDevice: true
+    }
+  });
+
+  const [originalSettings] = useState(JSON.parse(JSON.stringify(settings)));
+  const [showOrderingModal, setShowOrderingModal] = useState(false);
+  const [newOrderMode, setNewOrderMode] = useState({ name: '', type: 'DSR', orderTab: '' });
+
+  // Handle changes and update local dirty state only
+  const updateSetting = (section, field, value) => {
+    setSettings(prev => ({
+      ...prev,
+      [section]: field === null ? value : {
+        ...prev[section],
+        [field]: value
+      }
+    }));
+    setIsPageDirty(true);
   };
 
-  const handleDataChange = (setter, value) => {
-    setter(value);
-    setIsDirty(true);
+  const updateSubSetting = (section, subSection, field, value) => {
+    setSettings(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [subSection]: {
+          ...prev[section][subSection],
+          [field]: value
+        }
+      }
+    }));
+    setIsPageDirty(true);
   };
+
+  const handleSave = () => {
+    console.log('Saving settings:', settings);
+    setIsPageDirty(false);
+  };
+
+  const handleDiscard = () => {
+    setSettings(JSON.parse(JSON.stringify(originalSettings)));
+    setIsPageDirty(false);
+  };
+
+  // Helper for Toggle
+  const Toggle = ({ enabled, onClick, label }) => (
+    <div className="flex items-center justify-between p-4 bg-card border border-border rounded-xl">
+      <div>
+        <p className="text-sm font-bold text-foreground">{label}</p>
+      </div>
+      <button 
+        onClick={onClick}
+        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${enabled ? 'bg-primary' : 'bg-muted'}`}
+      >
+        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${enabled ? 'translate-x-6' : 'translate-x-1'}`} />
+      </button>
+    </div>
+  );
+
+  // Helper for Input Group
+  const InputGroup = ({ label, value, onChange, placeholder, type = "text", subtext }) => (
+    <div className="space-y-1.5">
+      <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">{label}</label>
+      <input 
+        type={type}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full px-4 py-2.5 bg-muted/10 border border-border rounded-xl text-sm font-medium outline-none focus:border-primary transition-all"
+      />
+      {subtext && <p className="text-[10px] text-muted-foreground font-medium">{subtext}</p>}
+    </div>
+  );
 
   return (
-    <div className="flex flex-col h-full bg-muted/10 overflow-hidden">
+    <div className="flex flex-col h-full bg-muted/10 overflow-hidden relative">
       <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        {/* Sidebar Tabs — horizontal scroll on mobile, vertical on desktop */}
-        <div className="md:w-64 bg-card md:border-r border-b md:border-b-0 border-border overflow-x-auto md:overflow-y-auto shrink-0 md:py-6 md:px-4">
-          <div className="flex md:flex-col gap-1 px-3 md:px-0 py-2 md:py-0">
-            {TABS.map(tab => (
+        {/* Sidebar Navigation */}
+        <div className="md:w-72 bg-card border-r border-border flex flex-col shrink-0">
+          <div className="p-6 border-b border-border">
+            <h1 className="text-xl font-black text-foreground">Global Settings</h1>
+            <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest mt-1">Platform Configuration</p>
+          </div>
+          <div className="flex-1 overflow-y-auto p-4 space-y-1 scrollbar-hide">
+            {SECTIONS.map(section => (
               <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 md:gap-3 px-3 md:px-4 py-2 md:py-3 rounded-xl text-sm font-bold transition-all whitespace-nowrap md:whitespace-normal shrink-0 md:shrink md:w-full ${
-                  activeTab === tab.id 
-                    ? 'bg-primary/10 text-primary' 
+                key={section.id}
+                onClick={() => setActiveSection(section.id)}
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold transition-all ${
+                  activeSection === section.id 
+                    ? 'bg-primary/10 text-primary shadow-sm' 
                     : 'text-muted-foreground hover:bg-muted hover:text-foreground'
                 }`}
               >
-                <tab.icon className="w-5 h-5 shrink-0" />
-                {tab.label}
+                <section.icon className={`w-5 h-5 ${activeSection === section.id ? 'text-primary' : 'text-muted-foreground'}`} />
+                {section.label}
               </button>
             ))}
           </div>
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-8">
-          <div className="max-w-5xl mx-auto space-y-6 pb-12">
+        <div className="flex-1 overflow-y-auto bg-muted/5 relative">
+          <div className="max-w-4xl mx-auto p-6 md:p-10 space-y-8 pb-32">
             
-            {activeTab === 'overview' && (
-              <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-                {/* Quick Actions */}
+            {/* App Settings */}
+            {activeSection === 'app' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-black text-foreground">Application Settings</h2>
+                  <p className="text-sm text-muted-foreground">Manage core application behavior and display.</p>
+                </div>
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-primary text-primary-foreground p-6 rounded-2xl shadow-lg relative overflow-hidden group cursor-pointer" onClick={() => setShowResModal(true)}>
-                    <div className="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                      <Building2 size={120} />
-                    </div>
-                    <h3 className="text-xl font-black mb-2">Create New Restaurant</h3>
-                    <p className="text-primary-foreground/80 text-sm mb-4">Add a new brand or tenant to the platform.</p>
-                    <div className="bg-white/20 w-fit px-4 py-2 rounded-lg font-bold text-sm backdrop-blur-sm">
-                      Get Started <ChevronRight className="inline-block w-4 h-4" />
-                    </div>
+                  <InputGroup 
+                    label="Name of restaurant" 
+                    value={settings.app.restaurantName} 
+                    onChange={val => updateSetting('app', 'restaurantName', val)}
+                    placeholder="e.g. La milano"
+                  />
+                  <InputGroup 
+                    label="Application display name" 
+                    value={settings.app.displayName} 
+                    onChange={val => updateSetting('app', 'displayName', val)}
+                    placeholder="e.g. La Milano POS"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <Toggle 
+                    label="Customer Email Compulsory" 
+                    enabled={settings.app.emailCompulsory} 
+                    onClick={() => updateSetting('app', 'emailCompulsory', !settings.app.emailCompulsory)} 
+                  />
+                  <Toggle 
+                    label="Apply Mask on Category Images" 
+                    enabled={settings.app.categoryMask} 
+                    onClick={() => updateSetting('app', 'categoryMask', !settings.app.categoryMask)} 
+                  />
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Logo Height (px)</label>
+                    <input 
+                      type="number" 
+                      value={settings.app.logoHeight} 
+                      onChange={e => updateSetting('app', 'logoHeight', parseInt(e.target.value))}
+                      className="w-full px-4 py-2.5 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none focus:border-primary"
+                    />
                   </div>
-                  <div className="bg-foreground text-background p-6 rounded-2xl shadow-lg relative overflow-hidden group cursor-pointer" onClick={() => {
-                    setSelectedTenant(tenants[0]);
-                    setShowOutletModal(true);
-                  }}>
-                    <div className="absolute -right-4 -bottom-4 opacity-10 group-hover:scale-110 transition-transform duration-500">
-                      <Store size={120} />
+                </div>
+
+                <div className="bg-card border border-border rounded-2xl overflow-hidden">
+                  <div className="p-6 border-b border-border bg-muted/20">
+                    <h3 className="font-black text-foreground">Splash Screen Configuration</h3>
+                  </div>
+                  <div className="p-6 space-y-6">
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Splash Screen Type</label>
+                      <select 
+                        value={settings.app.splashScreen.type}
+                        onChange={e => updateSubSetting('app', 'splashScreen', 'type', e.target.value)}
+                        className="w-full px-4 py-2.5 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none focus:border-primary appearance-none cursor-pointer"
+                      >
+                        <option>Static Logo</option>
+                        <option>Image</option>
+                        <option>Animated Logo</option>
+                        <option>Video</option>
+                      </select>
                     </div>
-                    <h3 className="text-xl font-black mb-2">Launch New Outlet</h3>
-                    <p className="text-background/80 text-sm mb-4">Expand an existing brand with a new physical store.</p>
-                    <div className="bg-background/10 w-fit px-4 py-2 rounded-lg font-bold text-sm backdrop-blur-sm border border-background/20">
-                      Add Store <ChevronRight className="inline-block w-4 h-4" />
+                    
+                    <div className="border-2 border-dashed border-border rounded-2xl p-12 text-center hover:border-primary transition-colors cursor-pointer group">
+                      <div className="w-16 h-16 bg-muted/20 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                        <ImageIcon className="text-muted-foreground group-hover:text-primary" />
+                      </div>
+                      <p className="text-sm font-bold text-foreground">Click to upload {settings.app.splashScreen.type}</p>
+                      <p className="text-xs text-muted-foreground mt-1">Max size 1MB • 3s limit for video</p>
                     </div>
                   </div>
                 </div>
 
-                {/* Quick Stats */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  <div className="bg-card border border-border p-5 rounded-2xl shadow-sm">
-                    <p className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-1">Total Brands</p>
-                    <p className="text-3xl font-black">{tenants.length}</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                   <div className="space-y-1.5">
+                    <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Offer Usage Time (Minutes)</label>
+                    <input 
+                      type="number" 
+                      value={settings.app.offerUsageTime} 
+                      onChange={e => updateSetting('app', 'offerUsageTime', parseInt(e.target.value))}
+                      className="w-full px-4 py-2.5 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none focus:border-primary"
+                    />
                   </div>
-                  <div className="bg-card border border-border p-5 rounded-2xl shadow-sm">
-                    <p className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-1">Total Outlets</p>
-                    <p className="text-3xl font-black">{tenants.reduce((acc, t) => acc + t.outlets.length, 0)}</p>
-                  </div>
-                  <div className="bg-card border border-border p-5 rounded-2xl shadow-sm">
-                    <p className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-1">System Health</p>
-                    <div className="flex items-center gap-2 mt-2">
-                      <div className="w-2.5 h-2.5 bg-green-500 rounded-full animate-pulse" />
-                      <p className="text-lg font-bold text-green-600">All Systems Operational</p>
+                  <div className="flex gap-4">
+                    <div className="flex-1">
+                      <Toggle 
+                        label="Rating Popup" 
+                        enabled={settings.app.ratingPopup} 
+                        onClick={() => updateSetting('app', 'ratingPopup', !settings.app.ratingPopup)} 
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <Toggle 
+                        label="Show Save Badge" 
+                        enabled={settings.app.showSaveBadge} 
+                        onClick={() => updateSetting('app', 'showSaveBadge', !settings.app.showSaveBadge)} 
+                      />
                     </div>
                   </div>
                 </div>
               </div>
             )}
 
-            {activeTab === 'restaurants' && (
-              <div className="space-y-6 animate-in fade-in duration-300">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-black text-foreground">Restaurant Management</h2>
-                  <button className="flex items-center gap-2 px-4 py-2 text-sm font-bold bg-primary text-primary-foreground rounded-lg" onClick={() => setShowResModal(true)}>
-                    <Plus className="w-4 h-4" /> Create Restaurant
-                  </button>
+            {/* Brand Settings */}
+            {activeSection === 'brand' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-black text-foreground">Brand Identity</h2>
+                  <p className="text-sm text-muted-foreground">Customize logos, colors, and messaging.</p>
                 </div>
-                <div className="grid grid-cols-1 gap-4">
-                  {tenants.map(tenant => (
-                    <div key={tenant.id} className="bg-card border border-border p-4 rounded-2xl flex items-center justify-between group hover:border-primary transition-colors">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary font-black text-lg">
-                          {tenant.name.charAt(0)}
-                        </div>
-                        <div>
-                          <h3 className="font-black text-foreground">{tenant.name}</h3>
-                          <p className="text-xs text-muted-foreground">{tenant.email} • {tenant.outlets.length} Outlets</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button className="px-3 py-1.5 text-xs font-bold hover:bg-muted rounded-lg" onClick={() => {
-                          setSelectedTenant(tenant);
-                          setShowOutletModal(true);
-                        }}>Add Outlet</button>
-                        <button className="p-2 hover:bg-muted rounded-lg text-muted-foreground"><MoreVertical size={18} /></button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
 
-            {activeTab === 'credentials' && (
-              <div className="space-y-6 animate-in fade-in duration-300">
-                <div className="bg-card border border-border rounded-2xl overflow-hidden">
-                  <div className="px-6 py-5 border-b border-border bg-muted/20 flex items-center gap-3">
-                    <Map className="w-5 h-5 text-primary" />
-                    <div>
-                      <h2 className="text-lg font-black text-foreground">Google Cloud Platform</h2>
-                      <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">API Keys & Authentication</p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+                    <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest">Brand Logo</h3>
+                    <div className="h-40 bg-muted/10 border border-border border-dashed rounded-xl flex items-center justify-center relative group">
+                      <div className="text-center">
+                        <ImageIcon className="mx-auto mb-2 text-muted-foreground" />
+                        <p className="text-[10px] font-bold text-muted-foreground">Upload Primary Logo</p>
+                      </div>
                     </div>
                   </div>
-                  <div className="p-6 space-y-6">
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Google Maps API Key</label>
-                      <input 
-                        type="password" 
-                        value={credentials.googleMapsKey}
-                        onChange={e => handleDataChange(setCredentials, {...credentials, googleMapsKey: e.target.value})}
-                        className="w-full px-4 py-2 bg-muted/10 border border-border rounded-lg text-sm font-medium outline-none focus:border-primary" 
-                        placeholder="AIzaSy..." 
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Google Auth Client ID</label>
-                      <input 
-                        type="text" 
-                        value={credentials.googleAuthClientId}
-                        onChange={e => handleDataChange(setCredentials, {...credentials, googleAuthClientId: e.target.value})}
-                        className="w-full px-4 py-2 bg-muted/10 border border-border rounded-lg text-sm font-medium outline-none focus:border-primary" 
-                        placeholder="123456789-abc.apps.googleusercontent.com" 
-                      />
+                  <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+                    <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest">Footer Logo</h3>
+                    <div className="h-40 bg-muted/10 border border-border border-dashed rounded-xl flex items-center justify-center relative group">
+                      <div className="text-center">
+                        <ImageIcon className="mx-auto mb-2 text-muted-foreground" />
+                        <p className="text-[10px] font-bold text-muted-foreground">Upload Footer Logo</p>
+                      </div>
                     </div>
                   </div>
                 </div>
 
-                <div className="bg-card border border-border rounded-2xl overflow-hidden">
-                  <div className="px-6 py-5 border-b border-border bg-muted/20 flex items-center gap-3">
-                    <MessageSquare className="w-5 h-5 text-primary" />
-                    <div>
-                      <h2 className="text-lg font-black text-foreground">Communications Gateway</h2>
-                      <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">SMS & WhatsApp Credentials</p>
-                    </div>
-                  </div>
-                  <div className="p-6 space-y-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Twilio Account SID</label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Primary Color</label>
+                    <div className="flex gap-3">
+                      <div className="flex-1 relative">
                         <input 
                           type="text" 
-                          value={credentials.twilioSid}
-                          onChange={e => handleDataChange(setCredentials, {...credentials, twilioSid: e.target.value})}
-                          className="w-full px-4 py-2 bg-muted/10 border border-border rounded-lg text-sm font-medium outline-none focus:border-primary" 
-                          placeholder="AC..." 
+                          value={settings.brand.primaryColor}
+                          onChange={e => updateSetting('brand', 'primaryColor', e.target.value)}
+                          className="w-full pl-4 pr-12 py-2.5 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none focus:border-primary"
                         />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md border border-border" style={{ backgroundColor: settings.brand.primaryColor }} />
                       </div>
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Auth Token</label>
+                      <input type="color" className="w-12 h-12 p-0 border-none bg-transparent cursor-pointer" value={settings.brand.primaryColor} onChange={e => updateSetting('brand', 'primaryColor', e.target.value)} />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Secondary Color</label>
+                    <div className="flex gap-3">
+                      <div className="flex-1 relative">
                         <input 
-                          type="password" 
-                          value={credentials.twilioToken}
-                          onChange={e => handleDataChange(setCredentials, {...credentials, twilioToken: e.target.value})}
-                          className="w-full px-4 py-2 bg-muted/10 border border-border rounded-lg text-sm font-medium outline-none focus:border-primary" 
+                          type="text" 
+                          value={settings.brand.secondaryColor}
+                          onChange={e => updateSetting('brand', 'secondaryColor', e.target.value)}
+                          className="w-full pl-4 pr-12 py-2.5 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none focus:border-primary"
                         />
+                        <div className="absolute right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-md border border-border" style={{ backgroundColor: settings.brand.secondaryColor }} />
                       </div>
+                      <input type="color" className="w-12 h-12 p-0 border-none bg-transparent cursor-pointer" value={settings.brand.secondaryColor} onChange={e => updateSetting('brand', 'secondaryColor', e.target.value)} />
                     </div>
                   </div>
                 </div>
 
+                <div className="space-y-6">
+                  <InputGroup 
+                    label="Greeting Message" 
+                    value={settings.brand.greeting} 
+                    onChange={val => updateSetting('brand', 'greeting', val)} 
+                    placeholder="e.g. Welcome to our store!"
+                  />
+                  <InputGroup 
+                    label="Special Instruction Message" 
+                    value={settings.brand.specialInstruction} 
+                    onChange={val => updateSetting('brand', 'specialInstruction', val)} 
+                    placeholder="e.g. Please add any special requests here."
+                  />
+                </div>
+
                 <div className="bg-card border border-border rounded-2xl overflow-hidden">
-                  <div className="px-6 py-5 border-b border-border bg-muted/20 flex items-center gap-3">
-                    <Mail className="w-5 h-5 text-primary" />
+                  <div className="p-6 border-b border-border bg-muted/20 flex items-center justify-between">
+                    <h3 className="font-black text-foreground">Social Links</h3>
+                    <button 
+                      onClick={() => updateSubSetting('brand', 'social', 'enabled', !settings.brand.social.enabled)}
+                      className={`relative inline-flex h-5 w-10 items-center rounded-full transition-colors ${settings.brand.social.enabled ? 'bg-primary' : 'bg-muted'}`}
+                    >
+                      <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${settings.brand.social.enabled ? 'translate-x-5' : 'translate-x-1.5'}`} />
+                    </button>
+                  </div>
+                  {settings.brand.social.enabled && (
+                    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 animate-in slide-in-from-top-2 duration-300">
+                      <InputGroup label="Instagram" value={settings.brand.social.instagram} onChange={val => updateSubSetting('brand', 'social', 'instagram', val)} placeholder="URL" />
+                      <InputGroup label="Facebook" value={settings.brand.social.facebook} onChange={val => updateSubSetting('brand', 'social', 'facebook', val)} placeholder="URL" />
+                      <InputGroup label="X (Twitter)" value={settings.brand.social.x} onChange={val => updateSubSetting('brand', 'social', 'x', val)} placeholder="URL" />
+                      <InputGroup label="LinkedIn" value={settings.brand.social.linkedin} onChange={val => updateSubSetting('brand', 'social', 'linkedin', val)} placeholder="URL" />
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* SMS Gateway */}
+            {activeSection === 'sms' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-black text-foreground">SMS Gateway</h2>
+                  <p className="text-sm text-muted-foreground">Configure your communication channels.</p>
+                </div>
+                <div className="bg-card border border-border rounded-2xl p-6 space-y-6">
+                  <div className="flex items-center gap-4 p-4 bg-primary/5 rounded-xl border border-primary/20">
+                    <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                      <MessageSquare />
+                    </div>
                     <div>
-                      <h2 className="text-lg font-black text-foreground">SMTP Configuration</h2>
-                      <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">Outgoing Email Settings</p>
+                      <p className="text-sm font-black text-foreground">2Factor SMS Gateway</p>
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase">Active Provider</p>
                     </div>
                   </div>
-                  <div className="p-6 space-y-6">
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
-                      <div className="col-span-2 space-y-1.5">
-                        <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">SMTP Host</label>
-                        <input type="text" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-lg text-sm font-medium outline-none focus:border-primary" placeholder="smtp.gmail.com" onChange={() => setIsDirty(true)} />
-                      </div>
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Port</label>
-                        <input type="text" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-lg text-sm font-medium outline-none focus:border-primary" placeholder="587" onChange={() => setIsDirty(true)} />
-                      </div>
+                  <InputGroup 
+                    label="2Factor SMS API Key" 
+                    value={settings.sms.twoFactorApiKey} 
+                    onChange={val => updateSetting('sms', 'twoFactorApiKey', val)} 
+                    placeholder="Enter your API Key"
+                    type="password"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Maps */}
+            {activeSection === 'maps' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-black text-foreground">Maps & Geolocation</h2>
+                  <p className="text-sm text-muted-foreground">Integrate map services for deliveries and store tracking.</p>
+                </div>
+                <div className="bg-card border border-border rounded-2xl p-6 space-y-6">
+                  <div className="flex items-center gap-4 p-4 bg-[#4285F4]/5 rounded-xl border border-[#4285F4]/20">
+                    <div className="w-12 h-12 bg-[#4285F4]/10 rounded-xl flex items-center justify-center text-[#4285F4]">
+                      <MapPin />
                     </div>
+                    <div>
+                      <p className="text-sm font-black text-foreground">Google Maps Platform</p>
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase">API Integration</p>
+                    </div>
+                  </div>
+                  <InputGroup 
+                    label="Google API Key" 
+                    value={settings.maps.googleApiKey} 
+                    onChange={val => updateSetting('maps', 'googleApiKey', val)} 
+                    placeholder="AIzaSy..."
+                    type="password"
+                    subtext="Required for address search and distance calculation."
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Languages */}
+            {activeSection === 'languages' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-black text-foreground">Languages</h2>
+                  <p className="text-sm text-muted-foreground">Select supported languages for your platform.</p>
+                </div>
+                <div className="bg-card border border-border rounded-2xl p-6">
+                  <label className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-4 block">Select Languages</label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {['English', 'Marathi', 'Gujarati', 'Hindi', 'Tamil', 'Kannada', 'Bengali', 'Punjabi'].map(lang => (
+                      <button
+                        key={lang}
+                        onClick={() => {
+                          const newLangs = settings.languages.includes(lang)
+                            ? settings.languages.filter(l => l !== lang)
+                            : [...settings.languages, lang];
+                          updateSetting('languages', null, newLangs);
+                        }}
+                        className={`flex items-center justify-between px-4 py-3 rounded-xl border text-sm font-bold transition-all ${
+                          settings.languages.includes(lang)
+                            ? 'bg-primary/10 border-primary text-primary'
+                            : 'bg-muted/10 border-border text-muted-foreground hover:border-muted-foreground'
+                        }`}
+                      >
+                        {lang}
+                        {settings.languages.includes(lang) && <Check size={14} />}
+                      </button>
+                    ))}
                   </div>
                 </div>
               </div>
             )}
 
-            {activeTab === 'outlets' && (
-              <div className="space-y-6 animate-in fade-in duration-300">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-2xl font-black text-foreground">Global Outlet Oversight</h2>
-                  <div className="relative w-64">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={16} />
-                    <input type="text" placeholder="Search outlets..." className="w-full pl-9 pr-4 py-1.5 bg-card border border-border rounded-lg text-sm outline-none focus:border-primary" />
+            {/* Legal / About / Contact */}
+            {['about', 'contact', 'legal'].includes(activeSection) && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-black text-foreground">
+                    {activeSection === 'about' && 'About Us Content'}
+                    {activeSection === 'contact' && 'Contact Information'}
+                    {activeSection === 'legal' && 'Legal & Policies'}
+                  </h2>
+                  <p className="text-sm text-muted-foreground">Enter the content that will be displayed to your customers.</p>
+                </div>
+                <div className="bg-card border border-border rounded-2xl p-6">
+                   <div className="space-y-1.5">
+                    <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">
+                      {activeSection === 'about' ? 'About Content' : activeSection === 'contact' ? 'Contact Details' : 'Privacy Policy'}
+                    </label>
+                    <textarea 
+                      className="w-full h-96 px-4 py-3 bg-muted/10 border border-border rounded-xl text-sm font-medium outline-none focus:border-primary resize-none"
+                      placeholder="Start typing..."
+                      value={settings.legal[activeSection === 'about' ? 'aboutUs' : activeSection === 'contact' ? 'contactUs' : 'privacyPolicy']}
+                      onChange={e => updateSubSetting('legal', activeSection === 'about' ? 'aboutUs' : activeSection === 'contact' ? 'contactUs' : 'privacyPolicy', null, e.target.value)}
+                    />
                   </div>
                 </div>
-                <div className="bg-card border border-border rounded-2xl overflow-x-auto">
+              </div>
+            )}
+
+            {/* Cashback Settings */}
+            {activeSection === 'cashback' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-black text-foreground">Cashback Configuration</h2>
+                  <p className="text-sm text-muted-foreground">Setup and manage customer loyalty rewards.</p>
+                </div>
+                
+                <Toggle 
+                  label="Enable Cashback Module" 
+                  enabled={settings.cashback.enabled} 
+                  onClick={() => updateSetting('cashback', 'enabled', !settings.cashback.enabled)}
+                />
+
+                {settings.cashback.enabled && (
+                  <div className="space-y-6 animate-in slide-in-from-top-4 duration-500">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <InputGroup 
+                        label="Earning Percentage (%)" 
+                        value={settings.cashback.earningPercentage} 
+                        onChange={val => updateSetting('cashback', 'earningPercentage', parseInt(val))}
+                        type="number"
+                      />
+                      <InputGroup 
+                        label="Expiration (Days)" 
+                        value={settings.cashback.expirationDays} 
+                        onChange={val => updateSetting('cashback', 'expirationDays', parseInt(val))}
+                        type="number"
+                      />
+                      <InputGroup 
+                        label="Signup Bonus (₹)" 
+                        value={settings.cashback.signupBonus} 
+                        onChange={val => updateSetting('cashback', 'signupBonus', parseInt(val))}
+                        type="number"
+                      />
+                    </div>
+
+                    <div className="bg-card border border-border rounded-2xl overflow-hidden">
+                      <div className="p-6 border-b border-border bg-muted/20">
+                        <h3 className="font-black text-foreground">Advance Settings</h3>
+                      </div>
+                      <div className="p-6 space-y-6">
+                         <Toggle 
+                          label="Same Configurations for all modes" 
+                          enabled={settings.cashback.advance.sameForAllModes} 
+                          onClick={() => updateSubSetting('cashback', 'advance', 'sameForAllModes', !settings.cashback.advance.sameForAllModes)}
+                        />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <InputGroup 
+                            label="Redeem Percentage (%)" 
+                            value={settings.cashback.advance.redeemPercentage} 
+                            onChange={val => updateSubSetting('cashback', 'advance', 'redeemPercentage', parseInt(val))}
+                            type="number"
+                          />
+                          <Toggle 
+                            label="Consolidate other offers" 
+                            enabled={settings.cashback.advance.consolidateOffers} 
+                            onClick={() => updateSubSetting('cashback', 'advance', 'consolidateOffers', !settings.cashback.advance.consolidateOffers)}
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-card border border-border rounded-2xl overflow-hidden">
+                      <div className="p-6 border-b border-border bg-muted/20">
+                        <h3 className="font-black text-foreground">Earnings Delay</h3>
+                      </div>
+                      <div className="p-6 space-y-6">
+                         <Toggle 
+                          label="Same Configurations for all modes" 
+                          enabled={settings.cashback.delay.sameForAllModes} 
+                          onClick={() => updateSubSetting('cashback', 'delay', 'sameForAllModes', !settings.cashback.delay.sameForAllModes)}
+                        />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Delay for Delivery</label>
+                            <div className="flex gap-2">
+                              <input type="number" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none" placeholder="Hrs" />
+                              <input type="number" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none" placeholder="Mins" />
+                            </div>
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Delay for Takeaway</label>
+                            <div className="flex gap-2">
+                              <input type="number" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none" placeholder="Hrs" />
+                              <input type="number" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none" placeholder="Mins" />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Ordering Mode */}
+            {activeSection === 'ordering' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-1">
+                    <h2 className="text-2xl font-black text-foreground">Ordering Modes</h2>
+                    <p className="text-sm text-muted-foreground">Manage how customers place orders.</p>
+                  </div>
+                  <button 
+                    onClick={() => setShowOrderingModal(true)}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-primary text-primary-foreground text-sm font-black rounded-xl shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+                  >
+                    <Plus className="w-4 h-4" /> Create Mode
+                  </button>
+                </div>
+
+                <div className="bg-card border border-border rounded-3xl overflow-hidden shadow-sm">
                   <table className="w-full text-left">
                     <thead>
                       <tr className="bg-muted/20 border-b border-border">
-                        <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Outlet</th>
-                        <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Brand</th>
-                        <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Location</th>
-                        <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Status</th>
+                        <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Name</th>
+                        <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Type</th>
+                        <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest">Order Tab</th>
+                        <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-center">Status</th>
                         <th className="px-6 py-4 text-[10px] font-black text-muted-foreground uppercase tracking-widest text-right">Actions</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-border">
-                      {tenants.flatMap(t => t.outlets.map(o => (
-                        <tr key={o.id} className="hover:bg-muted/5 transition-colors">
-                          <td className="px-6 py-4 font-bold text-foreground">{o.name}</td>
-                          <td className="px-6 py-4 text-sm text-muted-foreground font-medium">{t.name}</td>
-                          <td className="px-6 py-4 text-sm text-muted-foreground font-medium">{o.city}</td>
+                      {settings.orderingMode.map(mode => (
+                        <tr key={mode.id} className="hover:bg-muted/5 transition-colors group">
+                          <td className="px-6 py-4 font-bold text-foreground">{mode.name}</td>
                           <td className="px-6 py-4">
-                            <span className="px-2 py-0.5 bg-green-100 text-green-700 text-[10px] font-black rounded uppercase tracking-wider">Active</span>
+                             <span className="px-2 py-1 bg-muted/20 rounded-lg text-[10px] font-black uppercase text-muted-foreground">{mode.type}</span>
+                          </td>
+                          <td className="px-6 py-4 text-sm font-bold text-muted-foreground">{mode.orderTab}</td>
+                          <td className="px-6 py-4 text-center">
+                            <button 
+                              onClick={() => {
+                                const newModes = settings.orderingMode.map(m => m.id === mode.id ? { ...m, status: !m.status } : m);
+                                updateSetting('ordering', null, newModes);
+                              }}
+                              className={`relative inline-flex h-5 w-10 items-center rounded-full transition-colors ${mode.status ? 'bg-green-500' : 'bg-muted'}`}
+                            >
+                              <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${mode.status ? 'translate-x-5' : 'translate-x-1.5'}`} />
+                            </button>
                           </td>
                           <td className="px-6 py-4 text-right">
-                            <button className="p-1.5 hover:bg-muted rounded-lg text-muted-foreground"><ChevronRight size={16} /></button>
+                             <button className="p-2 hover:bg-red-50 hover:text-red-600 rounded-lg text-muted-foreground transition-colors">
+                               <Trash2 size={16} />
+                             </button>
                           </td>
                         </tr>
-                      )))}
+                      ))}
                     </tbody>
                   </table>
                 </div>
               </div>
             )}
 
-            {activeTab === 'branding' && (
-              <div className="space-y-6 animate-in fade-in duration-300">
-                <div className="bg-card border border-border rounded-2xl overflow-hidden">
-                  <div className="px-6 py-5 border-b border-border bg-muted/20 flex items-center gap-3">
-                    <PaintBucket className="w-5 h-5 text-primary" />
-                    <div>
-                      <h2 className="text-lg font-black text-foreground">Global Appearance</h2>
-                      <p className="text-xs text-muted-foreground uppercase tracking-widest font-bold">Theme & UI Preferences</p>
+            {/* Club Membership */}
+            {activeSection === 'membership' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-black text-foreground">Club Membership</h2>
+                  <p className="text-sm text-muted-foreground">Create premium subscription plans for loyal customers.</p>
+                </div>
+
+                <Toggle 
+                  label="Enable Membership Program" 
+                  enabled={settings.clubMembership.enabled} 
+                  onClick={() => updateSetting('membership', 'enabled', !settings.clubMembership.enabled)}
+                />
+
+                {settings.clubMembership.enabled && (
+                  <div className="space-y-8 animate-in slide-in-from-top-4 duration-500">
+                    <div className="bg-card border border-border rounded-2xl p-6">
+                      <label className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-4 block">Applicable Outlets</label>
+                      <div className="flex flex-wrap gap-2">
+                        {['All Outlets', 'Main Branch', 'Downtown', 'Airport', 'Mall Kiosk'].map(outlet => (
+                          <button
+                            key={outlet}
+                            className="px-4 py-2 rounded-xl border border-border text-xs font-bold hover:border-primary transition-all"
+                          >
+                            {outlet}
+                          </button>
+                        ))}
+                        <button className="px-4 py-2 rounded-xl bg-primary/10 text-primary text-xs font-black">+ Select Specific</button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="p-6 space-y-6">
-                    {/* Theme section removed - now in global topbar settings */}
 
-                    <div className="h-px bg-border"></div>
-
-                    {/* Color Scheme */}
-                    <div className="space-y-4">
-                      <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Primary Color</label>
-                      <div className="flex items-center gap-4">
-                        <div className="flex-1 space-y-1.5">
-                          <input 
-                            type="text" 
-                            value={brandData.primaryColor}
-                            onChange={e => handleDataChange(setBrandData, {...brandData, primaryColor: e.target.value})}
-                            className="w-full px-4 py-2 bg-muted/10 border border-border rounded-lg text-sm font-bold outline-none focus:border-primary" 
-                          />
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                      <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+                        <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Program Logo</h3>
+                        <div className="h-32 bg-muted/10 border border-border border-dashed rounded-xl flex items-center justify-center">
+                          <ImageIcon className="text-muted-foreground" />
                         </div>
-                        <input 
-                          type="color" 
-                          value={brandData.primaryColor}
-                          onChange={e => handleDataChange(setBrandData, {...brandData, primaryColor: e.target.value})}
-                          className="w-12 h-10 bg-transparent border-none cursor-pointer"
+                      </div>
+                      <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+                        <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Badge Icon</h3>
+                        <div className="h-32 bg-muted/10 border border-border border-dashed rounded-xl flex items-center justify-center">
+                          <Crown className="text-muted-foreground" />
+                        </div>
+                      </div>
+                      <div className="bg-card border border-border rounded-2xl p-6 space-y-4">
+                        <h3 className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Savings Icon</h3>
+                        <div className="h-32 bg-muted/10 border border-border border-dashed rounded-xl flex items-center justify-center">
+                          <Wallet className="text-muted-foreground" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-card border border-border rounded-2xl p-6 space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="space-y-1.5">
+                          <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Pricing Period</label>
+                          <select className="w-full px-4 py-2.5 bg-muted/10 border border-border rounded-xl text-sm font-bold">
+                            <option>Monthly</option>
+                            <option>Quarterly</option>
+                            <option>Yearly</option>
+                          </select>
+                        </div>
+                        <InputGroup label="Membership Name" value={settings.clubMembership.name} onChange={val => updateSetting('clubMembership', 'name', val)} placeholder="e.g. Gold Pass" />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <InputGroup label="Price (₹)" value={settings.clubMembership.price} onChange={val => updateSetting('clubMembership', 'price', parseInt(val))} type="number" />
+                        <InputGroup label="Compare Price (₹)" value={settings.clubMembership.comparePrice} onChange={val => updateSetting('clubMembership', 'comparePrice', parseInt(val))} type="number" />
+                      </div>
+                    </div>
+
+                    <div className="bg-card border border-border rounded-2xl overflow-hidden">
+                      <div className="p-6 border-b border-border bg-muted/20">
+                        <h3 className="font-black text-foreground">Exclusive Benefits</h3>
+                      </div>
+                      <div className="p-6 space-y-6">
+                        <Toggle 
+                          label="Enable Exclusive Pricing" 
+                          enabled={settings.clubMembership.exclusivePrice.enabled} 
+                          onClick={() => updateSubSetting('clubMembership', 'exclusivePrice', 'enabled', !settings.clubMembership.exclusivePrice.enabled)}
                         />
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                           <InputGroup label="Discount (%)" value={settings.clubMembership.exclusivePrice.discount} onChange={val => updateSubSetting('clubMembership', 'exclusivePrice', 'discount', parseInt(val))} type="number" />
+                           <div className="space-y-1.5">
+                            <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Applicability</label>
+                            <div className="flex gap-4">
+                              {['All', 'Specific Category', 'Specific Items'].map(opt => (
+                                <label key={opt} className="flex items-center gap-2 cursor-pointer">
+                                  <input type="radio" name="applicability" checked={settings.clubMembership.exclusivePrice.applicability === opt} onChange={() => updateSubSetting('clubMembership', 'exclusivePrice', 'applicability', opt)} className="accent-primary" />
+                                  <span className="text-xs font-bold">{opt}</span>
+                                </label>
+                              ))}
+                            </div>
+                           </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             )}
 
-            {activeTab === 'toggles' && (
-              <div className="p-12 text-center text-muted-foreground border-2 border-dashed border-border rounded-2xl bg-card/50">
-                <Settings className="w-12 h-12 mx-auto text-muted-foreground/30 mb-4" />
-                <h3 className="font-bold text-foreground">{TABS.find(t => t.id === activeTab)?.label}</h3>
-                <p className="text-sm mt-1">This section contains unified branding and feature toggles for the entire system.</p>
+            {/* Login Restrictions */}
+            {activeSection === 'login' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="space-y-1">
+                  <h2 className="text-2xl font-black text-foreground">Login Restrictions</h2>
+                  <p className="text-sm text-muted-foreground">Manage platform security and access control.</p>
+                </div>
+                <div className="bg-card border border-border rounded-2xl p-6">
+                   <Toggle 
+                    label="Allow only single device login" 
+                    enabled={settings.loginRestrictions.singleDevice} 
+                    onClick={() => updateSetting('loginRestrictions', 'singleDevice', !settings.loginRestrictions.singleDevice)}
+                  />
+                  <p className="mt-4 text-xs text-muted-foreground flex items-center gap-2">
+                    <AlertCircle size={14} className="text-primary" />
+                    Enabling this will automatically log out the previous session when a new login occurs.
+                  </p>
+                </div>
               </div>
             )}
 
@@ -404,52 +826,80 @@ export default function GlobalSettings() {
         </div>
       </div>
 
-      {/* Modals */}
-      {showResModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
-          <div className="bg-card w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div className="p-6 border-b border-border flex justify-between items-center bg-muted/10">
-              <h2 className="text-xl font-black text-foreground">Create New Restaurant</h2>
-              <button onClick={() => setShowResModal(false)} className="text-muted-foreground hover:text-foreground"><X size={20} /></button>
-            </div>
-            <div className="p-6 space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Brand Name</label>
-                <input type="text" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-lg text-sm font-medium outline-none focus:border-primary" placeholder="e.g. Burger King" value={newRes.name} onChange={e => setNewRes({...newRes, name: e.target.value})} />
+      {/* Global Action Bar */}
+      {isPageDirty && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-lg px-6 z-50 animate-in slide-in-from-bottom-8 duration-500">
+          <div className="bg-foreground text-background p-4 rounded-3xl shadow-2xl flex items-center justify-between gap-4 border border-white/10 backdrop-blur-md">
+            <div className="flex items-center gap-3 pl-2">
+              <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center animate-pulse">
+                <AlertCircle className="w-4 h-4 text-white" />
               </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Owner Email</label>
-                <input type="email" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-lg text-sm font-medium outline-none focus:border-primary" placeholder="admin@brand.com" value={newRes.email} onChange={e => setNewRes({...newRes, email: e.target.value})} />
+              <div>
+                <p className="text-xs font-black uppercase tracking-widest opacity-70">Unsaved Changes</p>
+                <p className="text-[10px] font-bold opacity-50">Review and apply settings</p>
               </div>
             </div>
-            <div className="p-6 border-t border-border flex justify-end gap-3 bg-muted/5">
-              <button className="px-4 py-2 text-sm font-bold text-muted-foreground hover:bg-muted rounded-lg" onClick={() => setShowResModal(false)}>Cancel</button>
-              <button className="px-4 py-2 text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg shadow-sm" onClick={handleCreateRestaurant}>Create Brand</button>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={handleDiscard}
+                className="px-4 py-2 text-xs font-black hover:bg-white/10 rounded-xl transition-colors"
+              >
+                Discard
+              </button>
+              <button 
+                onClick={handleSave}
+                className="px-6 py-2 bg-primary text-primary-foreground text-xs font-black rounded-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
+              >
+                <Save size={14} /> Save Changes
+              </button>
             </div>
           </div>
         </div>
       )}
 
-      {showOutletModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[60] p-4">
-          <div className="bg-card w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div className="p-6 border-b border-border flex justify-between items-center bg-muted/10">
-              <h2 className="text-xl font-black text-foreground">Add Outlet to {selectedTenant?.name}</h2>
-              <button onClick={() => setShowOutletModal(false)} className="text-muted-foreground hover:text-foreground"><X size={20} /></button>
-            </div>
-            <div className="p-6 space-y-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Outlet Name</label>
-                <input type="text" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-lg text-sm font-medium outline-none focus:border-primary" placeholder="e.g. Downtown" value={newOutlet.name} onChange={e => setNewOutlet({...newOutlet, name: e.target.value})} />
+      {/* Ordering Mode Modal */}
+      {showOrderingModal && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+          <div className="bg-card w-full max-w-md rounded-3xl shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 border border-border">
+            <div className="p-8 border-b border-border flex justify-between items-center bg-muted/20">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary">
+                  <UtensilsCrossed size={20} />
+                </div>
+                <div>
+                  <h2 className="text-lg font-black text-foreground">Create Ordering Mode</h2>
+                  <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">New Configuration</p>
+                </div>
               </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">City</label>
-                <input type="text" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-lg text-sm font-medium outline-none focus:border-primary" placeholder="New York" value={newOutlet.city} onChange={e => setNewOutlet({...newOutlet, city: e.target.value})} />
-              </div>
+              <button onClick={() => setShowOrderingModal(false)} className="text-muted-foreground hover:text-foreground p-2 hover:bg-muted rounded-xl transition-colors"><X size={20} /></button>
             </div>
-            <div className="p-6 border-t border-border flex justify-end gap-3 bg-muted/5">
-              <button className="px-4 py-2 text-sm font-bold text-muted-foreground hover:bg-muted rounded-lg" onClick={() => setShowOutletModal(false)}>Cancel</button>
-              <button className="px-4 py-2 text-sm font-bold bg-primary text-primary-foreground hover:bg-primary/90 rounded-lg shadow-sm" onClick={handleCreateOutlet}>Launch Outlet</button>
+            <div className="p-8 space-y-6">
+              <InputGroup label="Display Name" value={newOrderMode.name} onChange={val => setNewOrderMode({...newOrderMode, name: val})} placeholder="e.g. Fine Dine" />
+              <div className="space-y-1.5">
+                <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Type</label>
+                <div className="flex gap-4">
+                  {['DSR', 'Fine Dine'].map(type => (
+                    <label key={type} className="flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border border-border cursor-pointer hover:border-primary transition-all has-[:checked]:bg-primary/5 has-[:checked]:border-primary">
+                      <input type="radio" name="orderType" checked={newOrderMode.type === type} onChange={() => setNewOrderMode({...newOrderMode, type})} className="hidden" />
+                      <span className="text-xs font-bold">{type}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+              <InputGroup label="Order Tab Code" value={newOrderMode.orderTab} onChange={val => setNewOrderMode({...newOrderMode, orderTab: val})} placeholder="e.g. FDN" />
+            </div>
+            <div className="p-8 border-t border-border flex justify-end gap-3 bg-muted/5">
+              <button className="px-6 py-2.5 text-xs font-black text-muted-foreground hover:bg-muted rounded-xl transition-colors" onClick={() => setShowOrderingModal(false)}>Cancel</button>
+              <button 
+                className="px-8 py-2.5 text-xs font-black bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
+                onClick={() => {
+                  const mode = { ...newOrderMode, id: Date.now(), status: true };
+                  updateSetting('ordering', null, [...settings.orderingMode, mode]);
+                  setShowOrderingModal(false);
+                }}
+              >
+                Add Mode
+              </button>
             </div>
           </div>
         </div>

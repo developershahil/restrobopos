@@ -104,7 +104,7 @@ export default function DashboardLayout() {
             ].map((t) => (
               <button
                 key={t.id}
-                onClick={() => { setTheme(t.id); setIsDirty(true); }}
+                onClick={() => { setTheme(t.id); }}
                 className={`flex flex-col items-center gap-1.5 p-2 rounded-lg border-2 transition-all ${
                   theme === t.id 
                     ? 'border-primary bg-primary/5 text-primary' 
