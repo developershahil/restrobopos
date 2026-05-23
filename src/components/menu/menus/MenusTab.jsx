@@ -1,7 +1,14 @@
 import { useState } from 'react';
-import { Plus, Search, Calendar, MoreVertical, Clock, CheckCircle2, AlertTriangle, Zap, Edit2, Trash2, X, BookOpen } from 'lucide-react';
+import { Plus, Search, Calendar, Clock, CheckCircle2, Edit2, Trash2, X, BookOpen } from 'lucide-react';
 import { useMenuStore } from '../../../store/useMenuStore';
 import { ConfirmModal } from '../builder/modals/FormModals';
+
+const Field = ({ label, children }) => (
+  <div>
+    <label className="block text-xs font-semibold text-muted-foreground uppercase mb-1">{label}</label>
+    {children}
+  </div>
+);
 
 // ─── Create / Edit Modal ──────────────────────────────────────────────────────
 function MenuFormModal({ initial, onSave, onClose }) {
@@ -21,12 +28,6 @@ function MenuFormModal({ initial, onSave, onClose }) {
     onClose();
   };
 
-  const Field = ({ label, children }) => (
-    <div>
-      <label className="block text-xs font-semibold text-muted-foreground uppercase mb-1">{label}</label>
-      {children}
-    </div>
-  );
   const inputCls = "w-full bg-background border border-border rounded-lg px-3 py-2 text-sm outline-none focus:border-primary transition-colors";
 
   return (
@@ -106,7 +107,6 @@ export default function MenusTab() {
   const { menus, addMenu, updateMenu, deleteMenu } = useMenuStore();
   const [search, setSearch] = useState('');
   const [modal, setModal]   = useState(null); // null | {mode:'add'} | {mode:'edit',menu}
-  const [menuOpen, setMenuOpen] = useState(null); // id of row with open action menu
 
   const filtered = menus.filter(m =>
     m.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -143,7 +143,7 @@ export default function MenusTab() {
       </div>
 
       {/* Table */}
-      <div className="flex-1 overflow-auto" onClick={() => setMenuOpen(null)}>
+      <div className="flex-1 overflow-auto">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-[60vh] text-center px-4">
             <div className="w-16 h-16 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-4">

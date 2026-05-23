@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { 
-  X, Bell, Smartphone, Send, Calendar, 
-  MapPin, Image as ImageIcon, Sparkles, 
-  Plus, Search, Info, CheckCircle2, ChevronRight,
-  Globe, Languages, Hash, Wand2
+  X, Bell, Smartphone, Send, Image as ImageIcon, 
+  Plus, Search, Info, Wand2
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -31,6 +29,7 @@ export default function NotificationDrawer({ isOpen, onClose, initialData, onSav
 
   useEffect(() => {
     if (initialData) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTitle(initialData.title || '');
       setDescription(initialData.description || '');
       setTargetScreen(initialData.targetScreen || 'Home');

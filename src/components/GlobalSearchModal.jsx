@@ -13,6 +13,7 @@ export default function GlobalSearchModal({ isOpen, onClose }) {
         inputRef.current?.focus();
       }, 100);
     } else {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setQuery('');
     }
   }, [isOpen]);

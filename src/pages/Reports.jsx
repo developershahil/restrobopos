@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { 
   BarChart3, PieChart, Users, ShoppingBag, Package, DollarSign, Tag,
-  Download, FileText, FileSpreadsheet, Calendar, MapPin, Filter, TrendingUp, AlertCircle
+  FileText, FileSpreadsheet, Filter, TrendingUp, AlertCircle
 } from 'lucide-react';
 
 const reportTabs = [
@@ -19,7 +19,7 @@ export default function Reports() {
   const [isExporting, setIsExporting] = useState(false);
   const [showExportToast, setShowExportToast] = useState(false);
 
-  const handleExport = (type) => {
+  const handleExport = () => {
     setIsExporting(true);
     setTimeout(() => {
       setIsExporting(false);

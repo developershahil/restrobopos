@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { AlertTriangle, WifiOff, X, ArrowRight, Printer, User, ShoppingBag, Clock, Bike } from 'lucide-react';
+import { X, ArrowRight, Printer, User, ShoppingBag, Clock, Bike } from 'lucide-react';
 
 // Mock Data
 const initialOrders = [
@@ -19,7 +19,6 @@ export default function LiveOrdersBoard() {
   const [orders, setOrders] = useState(initialOrders);
   const [statusFilter, setStatusFilter] = useState('All');
   const [focusMode, setFocusMode] = useState(false);
-  const [offline, setOffline] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState(initialOrders[0]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
@@ -70,6 +69,7 @@ export default function LiveOrdersBoard() {
   // Auto-adjust page if current page becomes empty due to action
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentPage(totalPages);
     }
   }, [totalPages, currentPage]);

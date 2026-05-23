@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { 
-  TrendingUp, TrendingDown, DollarSign, ShoppingBag, Percent, 
+  TrendingDown, DollarSign, ShoppingBag, Percent, 
   Clock, Map, BarChart3, ListOrdered, Store, Bike, Package, Utensils, Calendar
 } from 'lucide-react';
 

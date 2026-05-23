@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { useMenuStore } from '../../../store/useMenuStore';
-import { Search, Save, X, Edit3, ArrowUpDown } from 'lucide-react';
+import { Search, Save, Edit3 } from 'lucide-react';
 
 export default function BulkEditGrid({ onClose }) {
   const { items, categories, updateItem, setHasUnsyncedChanges } = useMenuStore();

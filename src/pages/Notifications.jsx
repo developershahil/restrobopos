@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
-  Search, Bell, Plus, Filter, MoreVertical, 
+  Search, Bell, Filter, 
   RefreshCcw, Copy, Trash2, Calendar, Smartphone,
-  ChevronLeft, ChevronRight, Send, CheckCircle2,
-  Clock, MapPin
+  ChevronLeft, ChevronRight, Send,
+  Clock
 } from 'lucide-react';
 import NotificationDrawer from '../components/notifications/NotificationDrawer';
 
@@ -55,6 +55,8 @@ export default function Notifications() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [selectedNotification, setSelectedNotification] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const PAGE_SIZE = 5;
 
   const handleCreateNew = () => {
     setSelectedNotification(null);
@@ -63,18 +65,17 @@ export default function Notifications() {
 
   const handleSaveNotification = (data) => {
     if (data.id) {
-      // Update existing
       setNotifications(prev => prev.map(n => n.id === data.id ? { ...n, ...data } : n));
     } else {
-      // Create new
       const newNotif = {
         ...data,
-        id: Date.now(),
+        id: crypto.randomUUID(),
         createdAt: new Date().toLocaleString(),
         status: data.isScheduled ? 'Scheduled' : 'Sent',
         reach: data.targeting === 'all' ? 12450 : 420
       };
       setNotifications(prev => [newNotif, ...prev]);
+      setCurrentPage(1);
     }
     setIsDrawerOpen(false);
   };
@@ -88,11 +89,12 @@ export default function Notifications() {
     if (window.confirm(`Do you want to resend "${notif.title}" now?`)) {
       const resentNotif = {
         ...notif,
-        id: Date.now(),
+        id: crypto.randomUUID(),
         createdAt: new Date().toLocaleString(),
         status: 'Sent'
       };
       setNotifications(prev => [resentNotif, ...prev]);
+      setCurrentPage(1);
     }
   };
 
@@ -105,6 +107,12 @@ export default function Notifications() {
   const filteredNotifications = notifications.filter(n => 
     n.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
     n.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  const totalPages = Math.max(1, Math.ceil(filteredNotifications.length / PAGE_SIZE));
+  const paginatedNotifications = filteredNotifications.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
   );
 
   return (
@@ -181,7 +189,7 @@ export default function Notifications() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {filteredNotifications.map((notif) => (
+              {paginatedNotifications.map((notif) => (
                 <tr key={notif.id} className="hover:bg-muted/30 transition-colors">
                   <td className="px-6 py-4">
                     <div className="max-w-md">
@@ -246,17 +254,33 @@ export default function Notifications() {
 
         {/* Pagination */}
         <div className="p-4 border-t border-border flex items-center justify-between bg-muted/10">
-          <p className="text-xs font-bold text-muted-foreground">Showing 1 to 4 of 4 notifications</p>
+          <p className="text-xs font-bold text-muted-foreground">
+            Showing {Math.min((currentPage - 1) * PAGE_SIZE + 1, filteredNotifications.length)}–{Math.min(currentPage * PAGE_SIZE, filteredNotifications.length)} of {filteredNotifications.length} notifications
+          </p>
           <div className="flex items-center gap-1">
-            <button className="p-2 rounded-lg hover:bg-muted text-muted-foreground disabled:opacity-30" disabled>
+            <button
+              onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+              disabled={currentPage === 1}
+              className="p-2 rounded-lg hover:bg-muted text-muted-foreground disabled:opacity-30"
+            >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            {[1].map(p => (
-              <button key={p} className="w-8 h-8 rounded-lg bg-primary text-primary-foreground text-xs font-black shadow-sm">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+              <button
+                key={p}
+                onClick={() => setCurrentPage(p)}
+                className={`w-8 h-8 rounded-lg text-xs font-black shadow-sm transition-colors ${
+                  p === currentPage ? 'bg-primary text-primary-foreground' : 'hover:bg-muted text-foreground'
+                }`}
+              >
                 {p}
               </button>
             ))}
-            <button className="p-2 rounded-lg hover:bg-muted text-muted-foreground disabled:opacity-30" disabled>
+            <button
+              onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded-lg hover:bg-muted text-muted-foreground disabled:opacity-30"
+            >
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>

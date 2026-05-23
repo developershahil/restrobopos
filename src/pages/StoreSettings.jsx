@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { 
   Settings, Save, X, Store, Clock, ShoppingBag, Truck, DollarSign, 
-  CreditCard, Monitor, Tag, Table2, ChevronDown, CheckCircle2, 
+  CreditCard, Tag, ChevronDown, CheckCircle2, 
   Layout, Eye, MapPin, Timer, Receipt, Users, Bell, ShieldCheck,
   Smartphone, Database, Globe, Layers, ListOrdered, Plus, Trash2,
   AlertCircle, Info, Bike, Utensils, Star
@@ -228,8 +229,24 @@ export default function StoreSettings() {
 
   const [formData, setFormData] = useState(initialValues);
   const [initialData, setInitialData] = useState(initialValues);
+  const outletContext = useOutletContext();
+  const discardKey = outletContext?.discardKey;
+  const setIsDirty = outletContext?.setIsDirty;
+
+  useEffect(() => {
+    if (discardKey) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setFormData(initialData);
+    }
+  }, [discardKey, initialData]);
 
   const hasChanges = JSON.stringify(formData) !== JSON.stringify(initialData);
+
+  useEffect(() => {
+    if (setIsDirty) {
+      setIsDirty(hasChanges);
+    }
+  }, [hasChanges, setIsDirty]);
 
   const handleSave = () => {
     setInitialData(formData);

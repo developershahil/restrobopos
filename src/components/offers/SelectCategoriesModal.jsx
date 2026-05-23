@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { X, Search, ChevronRight, ChevronDown, Check, Minus, MapPin } from 'lucide-react';
 
 const MOCK_OUTLETS = [

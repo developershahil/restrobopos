@@ -8,7 +8,6 @@ export default function AddonManager({ itemId }) {
     addonGroups, addAddonGroup, updateAddonGroup, deleteAddonGroup,
     addonItems, addAddonItem, updateAddonItem, deleteAddonItem,
     itemAddonLinks, setItemAddonLinks,
-    selectedCategoryId,
   } = useMenuStore();
 
   const link = itemAddonLinks[itemId] || { linked: [], applyToCategory: false };

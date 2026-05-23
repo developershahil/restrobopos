@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { TrendingUp, TrendingDown, ShoppingCart, AlertTriangle, ArrowDownToLine, ArrowUpFromLine, FileText, Filter } from 'lucide-react';
+import { ShoppingCart, AlertTriangle, ArrowDownToLine, ArrowUpFromLine, FileText, Filter } from 'lucide-react';
 import { useInventoryStore } from '../../../store/useInventoryStore';
 
 const TYPE_CONFIG = {

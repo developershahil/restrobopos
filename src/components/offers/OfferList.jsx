@@ -39,7 +39,6 @@ export default function OfferList({ onAddOffer, onEditOffer }) {
   const [offers, setOffers] = useState(MOCK_OFFERS);
   const [showTypeDropdown, setShowTypeDropdown] = useState(false);
   const [selectedOutlet, setSelectedOutlet] = useState('');
-  const [currentPage, setCurrentPage] = useState(1);
   const [linkModal, setLinkModal] = useState({ open: false, offer: null });
   const [linkedOutlets, setLinkedOutlets] = useState({});
   const [outletSearch, setOutletSearch] = useState('');

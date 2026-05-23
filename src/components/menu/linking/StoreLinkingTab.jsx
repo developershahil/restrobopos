@@ -131,8 +131,8 @@ export default function StoreLinkingTab() {
           </div>
           <div className="flex-1 overflow-y-auto p-3 space-y-1">
             {getFilteredList().map(item => {
-              let linkedCount = 0;
-              let totalCount = 0;
+              let linkedCount;
+              let totalCount;
               if (viewBy === 'store') {
                 linkedCount = links[item.id]?.length || 0;
                 totalCount = categories.length;

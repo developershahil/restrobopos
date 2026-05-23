@@ -1,4 +1,4 @@
-import { UploadCloud, Edit2, Archive, Link as LinkIcon, BarChart2 } from 'lucide-react';
+import { UploadCloud, Archive, Link as LinkIcon, BarChart2 } from 'lucide-react';
 import { useMenuStore } from '../../../store/useMenuStore';
 
 export default function ItemDrawer() {

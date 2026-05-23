@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Plus, Search, Edit2, Trash2, Copy, ToggleLeft, ToggleRight, MoveRight, ChevronUp, ChevronDown, Filter, MoreVertical, GripVertical, Clock } from 'lucide-react';
+import { Plus, Search, Edit2, Trash2, Copy, ToggleLeft, ToggleRight, MoveRight, ChevronUp, ChevronDown, MoreVertical, GripVertical, Clock } from 'lucide-react';
 import { useMenuStore } from '../../../store/useMenuStore';
 import { ItemModal, ConfirmModal } from './modals/FormModals';
 

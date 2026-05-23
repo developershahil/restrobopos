@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Share2, Clock, CheckCircle2, ExternalLink, Smartphone, X } from 'lucide-react';
+import { Share2, Clock, CheckCircle2, ExternalLink, Smartphone } from 'lucide-react';
 import { useMenuStore } from '../../../store/useMenuStore';
 
 const mockData = {

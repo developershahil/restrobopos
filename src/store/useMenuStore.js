@@ -89,7 +89,7 @@ const initialOffers = [
 let _idCounter = 100;
 const uid = (prefix) => `${prefix}${++_idCounter}`;
 
-export const useMenuStore = create((set, get) => ({
+export const useMenuStore = create((set) => ({
   // ── UI State ────────────────────────────────────────────────
   activeTab: 'builder',
   setActiveTab: (tab) => set({ activeTab: tab }),

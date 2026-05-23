@@ -1,4 +1,4 @@
-import { Clock, Calendar, CheckSquare, Plus, AlertCircle, Trash2, Power } from 'lucide-react';
+import { Clock, Calendar, Plus, AlertCircle, Trash2 } from 'lucide-react';
 
 const mockRules = [
   { id: 'r1', name: 'Late Night Disable', type: 'Time-based', condition: 'After 10:00 PM', action: 'Disable "Beverages" Category', status: true },

@@ -3,8 +3,8 @@ import { useOutletContext } from 'react-router-dom';
 import { 
   Settings, Palette, MessageSquare, MapPin, Languages, Info, Phone, 
   FileText, Wallet, UtensilsCrossed, Crown, ShieldCheck, 
-  Plus, X, ChevronRight, Save, Trash2, Globe, Check, Image as ImageIcon,
-  ChevronDown, Search, AlertCircle
+  Plus, X, Save, Trash2, Check, Image as ImageIcon,
+  AlertCircle
 } from 'lucide-react';
 
 const SECTIONS = [
@@ -22,8 +22,41 @@ const SECTIONS = [
   { id: 'login', label: 'Login Restrictions', icon: ShieldCheck },
 ];
 
+// Helper for Toggle
+const Toggle = ({ enabled, onClick, label }) => (
+  <div className="flex items-center justify-between p-4 bg-card border border-border rounded-xl">
+    <div>
+      <p className="text-sm font-bold text-foreground">{label}</p>
+    </div>
+    <button 
+      onClick={onClick}
+      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${enabled ? 'bg-primary' : 'bg-muted'}`}
+    >
+      <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${enabled ? 'translate-x-6' : 'translate-x-1'}`} />
+    </button>
+  </div>
+);
+
+// Helper for Input Group
+const InputGroup = ({ label, value, onChange, placeholder, type = "text", subtext }) => (
+  <div className="space-y-1.5">
+    <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">{label}</label>
+    <input 
+      type={type}
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="w-full px-4 py-2.5 bg-muted/10 border border-border rounded-xl text-sm font-medium outline-none focus:border-primary transition-all"
+    />
+    {subtext && <p className="text-[10px] text-muted-foreground font-medium">{subtext}</p>}
+  </div>
+);
+
 export default function GlobalSettings() {
-  useOutletContext(); // keep context connection for layout
+  const outletContext = useOutletContext();
+  const discardKey = outletContext?.discardKey;
+  const setIsDirty = outletContext?.setIsDirty;
+  
   const [isPageDirty, setIsPageDirty] = useState(false);
   const [activeSection, setActiveSection] = useState('app');
   
@@ -126,6 +159,26 @@ export default function GlobalSettings() {
   const [originalSettings] = useState(JSON.parse(JSON.stringify(settings)));
   const [showOrderingModal, setShowOrderingModal] = useState(false);
   const [newOrderMode, setNewOrderMode] = useState({ name: '', type: 'DSR', orderTab: '' });
+  const [saveSuccess, setSaveSuccess] = useState(false);
+
+  function handleDiscard() {
+    setSettings(JSON.parse(JSON.stringify(originalSettings)));
+    setIsPageDirty(false);
+  }
+
+  useEffect(() => {
+    if (discardKey) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      handleDiscard();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [discardKey]);
+
+  useEffect(() => {
+    if (setIsDirty) {
+      setIsDirty(isPageDirty);
+    }
+  }, [isPageDirty, setIsDirty]);
 
   // Handle changes and update local dirty state only
   const updateSetting = (section, field, value) => {
@@ -153,45 +206,31 @@ export default function GlobalSettings() {
     setIsPageDirty(true);
   };
 
+  // Deep update for 3-level nesting (e.g. cashback.delay.delivery.hours)
+  const updateDeepSetting = (section, sub1, sub2, field, value) => {
+    setSettings(prev => ({
+      ...prev,
+      [section]: {
+        ...prev[section],
+        [sub1]: {
+          ...prev[section][sub1],
+          [sub2]: {
+            ...prev[section][sub1][sub2],
+            [field]: value
+          }
+        }
+      }
+    }));
+    setIsPageDirty(true);
+  };
+
   const handleSave = () => {
     console.log('Saving settings:', settings);
     setIsPageDirty(false);
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 3000);
   };
 
-  const handleDiscard = () => {
-    setSettings(JSON.parse(JSON.stringify(originalSettings)));
-    setIsPageDirty(false);
-  };
-
-  // Helper for Toggle
-  const Toggle = ({ enabled, onClick, label }) => (
-    <div className="flex items-center justify-between p-4 bg-card border border-border rounded-xl">
-      <div>
-        <p className="text-sm font-bold text-foreground">{label}</p>
-      </div>
-      <button 
-        onClick={onClick}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${enabled ? 'bg-primary' : 'bg-muted'}`}
-      >
-        <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${enabled ? 'translate-x-6' : 'translate-x-1'}`} />
-      </button>
-    </div>
-  );
-
-  // Helper for Input Group
-  const InputGroup = ({ label, value, onChange, placeholder, type = "text", subtext }) => (
-    <div className="space-y-1.5">
-      <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">{label}</label>
-      <input 
-        type={type}
-        value={value}
-        onChange={e => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full px-4 py-2.5 bg-muted/10 border border-border rounded-xl text-sm font-medium outline-none focus:border-primary transition-all"
-      />
-      {subtext && <p className="text-[10px] text-muted-foreground font-medium">{subtext}</p>}
-    </div>
-  );
 
   return (
     <div className="flex flex-col h-full bg-muted/10 overflow-hidden relative">
@@ -417,12 +456,41 @@ export default function GlobalSettings() {
                   </div>
                   {settings.brand.social.enabled && (
                     <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 animate-in slide-in-from-top-2 duration-300">
-                      <InputGroup label="Instagram" value={settings.brand.social.instagram} onChange={val => updateSubSetting('brand', 'social', 'instagram', val)} placeholder="URL" />
-                      <InputGroup label="Facebook" value={settings.brand.social.facebook} onChange={val => updateSubSetting('brand', 'social', 'facebook', val)} placeholder="URL" />
-                      <InputGroup label="X (Twitter)" value={settings.brand.social.x} onChange={val => updateSubSetting('brand', 'social', 'x', val)} placeholder="URL" />
-                      <InputGroup label="LinkedIn" value={settings.brand.social.linkedin} onChange={val => updateSubSetting('brand', 'social', 'linkedin', val)} placeholder="URL" />
+                      <InputGroup label="Instagram" value={settings.brand.social.instagram} onChange={val => updateSubSetting('brand', 'social', 'instagram', val)} placeholder="https://instagram.com/..." />
+                      <InputGroup label="Facebook" value={settings.brand.social.facebook} onChange={val => updateSubSetting('brand', 'social', 'facebook', val)} placeholder="https://facebook.com/..." />
+                      <InputGroup label="X (Twitter)" value={settings.brand.social.x} onChange={val => updateSubSetting('brand', 'social', 'x', val)} placeholder="https://x.com/..." />
+                      <InputGroup label="LinkedIn" value={settings.brand.social.linkedin} onChange={val => updateSubSetting('brand', 'social', 'linkedin', val)} placeholder="https://linkedin.com/..." />
+                      <InputGroup label="YouTube" value={settings.brand.social.youtube} onChange={val => updateSubSetting('brand', 'social', 'youtube', val)} placeholder="https://youtube.com/..." />
                     </div>
                   )}
+                </div>
+
+                {/* Brand Banners — wired to state */}
+                <div className="bg-card border border-border rounded-2xl overflow-hidden">
+                  <div className="p-6 border-b border-border bg-muted/20">
+                    <h3 className="font-black text-foreground">Banners</h3>
+                  </div>
+                  <div className="p-6 space-y-4">
+                    <Toggle
+                      label="Show New Outlet Banner"
+                      enabled={settings.brand.showNewOutletBanner}
+                      onClick={() => updateSetting('brand', 'showNewOutletBanner', !settings.brand.showNewOutletBanner)}
+                    />
+                    <Toggle
+                      label="Show Enquiry Banner"
+                      enabled={settings.brand.showEnquiryBanner}
+                      onClick={() => updateSetting('brand', 'showEnquiryBanner', !settings.brand.showEnquiryBanner)}
+                    />
+                    {settings.brand.showEnquiryBanner && (
+                      <div className="border-2 border-dashed border-border rounded-xl p-8 text-center hover:border-primary transition-colors cursor-pointer group animate-in slide-in-from-top-2 duration-300">
+                        <div className="w-12 h-12 bg-muted/20 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                          <ImageIcon className="text-muted-foreground group-hover:text-primary" />
+                        </div>
+                        <p className="text-sm font-bold text-foreground">Upload Enquiry Banner Image</p>
+                        <p className="text-xs text-muted-foreground mt-1">Recommended 1200×400px • PNG or JPG</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
@@ -529,18 +597,29 @@ export default function GlobalSettings() {
                   </h2>
                   <p className="text-sm text-muted-foreground">Enter the content that will be displayed to your customers.</p>
                 </div>
-                <div className="bg-card border border-border rounded-2xl p-6">
-                   <div className="space-y-1.5">
+                <div className="bg-card border border-border rounded-2xl p-6 space-y-6">
+                  <div className="space-y-1.5">
                     <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">
                       {activeSection === 'about' ? 'About Content' : activeSection === 'contact' ? 'Contact Details' : 'Privacy Policy'}
                     </label>
-                    <textarea 
-                      className="w-full h-96 px-4 py-3 bg-muted/10 border border-border rounded-xl text-sm font-medium outline-none focus:border-primary resize-none"
+                    <textarea
+                      className="w-full h-72 px-4 py-3 bg-muted/10 border border-border rounded-xl text-sm font-medium outline-none focus:border-primary resize-none transition-all"
                       placeholder="Start typing..."
                       value={settings.legal[activeSection === 'about' ? 'aboutUs' : activeSection === 'contact' ? 'contactUs' : 'privacyPolicy']}
-                      onChange={e => updateSubSetting('legal', activeSection === 'about' ? 'aboutUs' : activeSection === 'contact' ? 'contactUs' : 'privacyPolicy', null, e.target.value)}
+                      onChange={e => updateSetting('legal', activeSection === 'about' ? 'aboutUs' : activeSection === 'contact' ? 'contactUs' : 'privacyPolicy', e.target.value)}
                     />
                   </div>
+                  {activeSection === 'legal' && (
+                    <div className="space-y-1.5 animate-in slide-in-from-top-2 duration-300">
+                      <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Terms &amp; Conditions</label>
+                      <textarea
+                        className="w-full h-72 px-4 py-3 bg-muted/10 border border-border rounded-xl text-sm font-medium outline-none focus:border-primary resize-none transition-all"
+                        placeholder="Enter your Terms & Conditions..."
+                        value={settings.legal.terms}
+                        onChange={e => updateSetting('legal', 'terms', e.target.value)}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -619,21 +698,29 @@ export default function GlobalSettings() {
                           onClick={() => updateSubSetting('cashback', 'delay', 'sameForAllModes', !settings.cashback.delay.sameForAllModes)}
                         />
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div className="space-y-1.5">
-                            <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Delay for Delivery</label>
-                            <div className="flex gap-2">
-                              <input type="number" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none" placeholder="Hrs" />
-                              <input type="number" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none" placeholder="Mins" />
-                            </div>
-                          </div>
-                          <div className="space-y-1.5">
-                            <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Delay for Takeaway</label>
-                            <div className="flex gap-2">
-                              <input type="number" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none" placeholder="Hrs" />
-                              <input type="number" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none" placeholder="Mins" />
-                            </div>
-                          </div>
-                        </div>
+                           <div className="space-y-1.5">
+                             <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Delay for Delivery</label>
+                             <div className="flex gap-2">
+                               <input type="number" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none" placeholder="Hrs"
+                                 value={settings.cashback.delay.delivery.hours}
+                                 onChange={e => updateDeepSetting('cashback', 'delay', 'delivery', 'hours', parseInt(e.target.value) || 0)} />
+                               <input type="number" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none" placeholder="Mins"
+                                 value={settings.cashback.delay.delivery.mins}
+                                 onChange={e => updateDeepSetting('cashback', 'delay', 'delivery', 'mins', parseInt(e.target.value) || 0)} />
+                             </div>
+                           </div>
+                           <div className="space-y-1.5">
+                             <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Delay for Takeaway</label>
+                             <div className="flex gap-2">
+                               <input type="number" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none" placeholder="Hrs"
+                                 value={settings.cashback.delay.takeaway.hours}
+                                 onChange={e => updateDeepSetting('cashback', 'delay', 'takeaway', 'hours', parseInt(e.target.value) || 0)} />
+                               <input type="number" className="w-full px-4 py-2 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none" placeholder="Mins"
+                                 value={settings.cashback.delay.takeaway.mins}
+                                 onChange={e => updateDeepSetting('cashback', 'delay', 'takeaway', 'mins', parseInt(e.target.value) || 0)} />
+                             </div>
+                           </div>
+                         </div>
                       </div>
                     </div>
                   </div>
@@ -680,7 +767,7 @@ export default function GlobalSettings() {
                             <button 
                               onClick={() => {
                                 const newModes = settings.orderingMode.map(m => m.id === mode.id ? { ...m, status: !m.status } : m);
-                                updateSetting('ordering', null, newModes);
+                                updateSetting('orderingMode', null, newModes);
                               }}
                               className={`relative inline-flex h-5 w-10 items-center rounded-full transition-colors ${mode.status ? 'bg-green-500' : 'bg-muted'}`}
                             >
@@ -688,7 +775,9 @@ export default function GlobalSettings() {
                             </button>
                           </td>
                           <td className="px-6 py-4 text-right">
-                             <button className="p-2 hover:bg-red-50 hover:text-red-600 rounded-lg text-muted-foreground transition-colors">
+                             <button 
+                               onClick={() => updateSetting('orderingMode', null, settings.orderingMode.filter(m => m.id !== mode.id))}
+                               className="p-2 hover:bg-red-50 hover:text-red-600 rounded-lg text-muted-foreground transition-colors">
                                <Trash2 size={16} />
                              </button>
                           </td>
@@ -711,7 +800,7 @@ export default function GlobalSettings() {
                 <Toggle 
                   label="Enable Membership Program" 
                   enabled={settings.clubMembership.enabled} 
-                  onClick={() => updateSetting('membership', 'enabled', !settings.clubMembership.enabled)}
+                  onClick={() => updateSetting('clubMembership', 'enabled', !settings.clubMembership.enabled)}
                 />
 
                 {settings.clubMembership.enabled && (
@@ -719,15 +808,26 @@ export default function GlobalSettings() {
                     <div className="bg-card border border-border rounded-2xl p-6">
                       <label className="text-xs font-black text-muted-foreground uppercase tracking-widest mb-4 block">Applicable Outlets</label>
                       <div className="flex flex-wrap gap-2">
-                        {['All Outlets', 'Main Branch', 'Downtown', 'Airport', 'Mall Kiosk'].map(outlet => (
-                          <button
-                            key={outlet}
-                            className="px-4 py-2 rounded-xl border border-border text-xs font-bold hover:border-primary transition-all"
-                          >
-                            {outlet}
-                          </button>
-                        ))}
-                        <button className="px-4 py-2 rounded-xl bg-primary/10 text-primary text-xs font-black">+ Select Specific</button>
+                        {['All Outlets', 'Main Branch', 'Downtown', 'Airport', 'Mall Kiosk'].map(outlet => {
+                          const isSelected = settings.clubMembership.outlets.includes(outlet);
+                          return (
+                            <button
+                              key={outlet}
+                              onClick={() => {
+                                const newOutlets = isSelected
+                                  ? settings.clubMembership.outlets.filter(o => o !== outlet)
+                                  : [...settings.clubMembership.outlets, outlet];
+                                updateSetting('clubMembership', 'outlets', newOutlets);
+                              }}
+                              className={`flex items-center gap-1.5 px-4 py-2 rounded-xl border text-xs font-bold transition-all ${
+                                isSelected ? 'bg-primary/10 border-primary text-primary' : 'border-border hover:border-primary text-muted-foreground'
+                              }`}
+                            >
+                              {outlet}
+                              {isSelected && <Check size={12} />}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
 
@@ -756,7 +856,11 @@ export default function GlobalSettings() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-1.5">
                           <label className="text-xs font-black text-muted-foreground uppercase tracking-widest">Pricing Period</label>
-                          <select className="w-full px-4 py-2.5 bg-muted/10 border border-border rounded-xl text-sm font-bold">
+                          <select
+                            value={settings.clubMembership.pricePeriod}
+                            onChange={e => updateSetting('clubMembership', 'pricePeriod', e.target.value)}
+                            className="w-full px-4 py-2.5 bg-muted/10 border border-border rounded-xl text-sm font-bold outline-none focus:border-primary appearance-none cursor-pointer"
+                          >
                             <option>Monthly</option>
                             <option>Quarterly</option>
                             <option>Yearly</option>
@@ -796,6 +900,31 @@ export default function GlobalSettings() {
                         </div>
                       </div>
                     </div>
+
+                    {/* Fee Waivers — wired to state */}
+                    <div className="bg-card border border-border rounded-2xl overflow-hidden">
+                      <div className="p-6 border-b border-border bg-muted/20">
+                        <h3 className="font-black text-foreground">Fee Waivers for Members</h3>
+                        <p className="text-xs text-muted-foreground mt-1">Waive specific fees for membership holders.</p>
+                      </div>
+                      <div className="p-6 space-y-4">
+                        <Toggle
+                          label="Waive Delivery Fee"
+                          enabled={settings.clubMembership.fees.delivery}
+                          onClick={() => updateSubSetting('clubMembership', 'fees', 'delivery', !settings.clubMembership.fees.delivery)}
+                        />
+                        <Toggle
+                          label="Waive Packaging Fee"
+                          enabled={settings.clubMembership.fees.packaging}
+                          onClick={() => updateSubSetting('clubMembership', 'fees', 'packaging', !settings.clubMembership.fees.packaging)}
+                        />
+                        <Toggle
+                          label="Waive Convenience Fee"
+                          enabled={settings.clubMembership.fees.convenience}
+                          onClick={() => updateSubSetting('clubMembership', 'fees', 'convenience', !settings.clubMembership.fees.convenience)}
+                        />
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -826,6 +955,16 @@ export default function GlobalSettings() {
         </div>
       </div>
 
+      {/* Save Success Toast */}
+      {saveSuccess && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 animate-in slide-in-from-bottom-8 duration-500">
+          <div className="bg-green-600 text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center gap-3">
+            <Check className="w-5 h-5" />
+            <p className="text-sm font-black">Settings saved successfully!</p>
+          </div>
+        </div>
+      )}
+
       {/* Global Action Bar */}
       {isPageDirty && (
         <div className="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-lg px-6 z-50 animate-in slide-in-from-bottom-8 duration-500">
@@ -840,13 +979,13 @@ export default function GlobalSettings() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button 
+              <button
                 onClick={handleDiscard}
                 className="px-4 py-2 text-xs font-black hover:bg-white/10 rounded-xl transition-colors"
               >
                 Discard
               </button>
-              <button 
+              <button
                 onClick={handleSave}
                 className="px-6 py-2 bg-primary text-primary-foreground text-xs font-black rounded-xl hover:scale-105 active:scale-95 transition-all flex items-center gap-2"
               >
@@ -894,8 +1033,9 @@ export default function GlobalSettings() {
                 className="px-8 py-2.5 text-xs font-black bg-primary text-primary-foreground hover:bg-primary/90 rounded-xl shadow-lg shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
                 onClick={() => {
                   const mode = { ...newOrderMode, id: Date.now(), status: true };
-                  updateSetting('ordering', null, [...settings.orderingMode, mode]);
+                  updateSetting('orderingMode', null, [...settings.orderingMode, mode]);
                   setShowOrderingModal(false);
+                  setNewOrderMode({ name: '', type: 'DSR', orderTab: '' });
                 }}
               >
                 Add Mode

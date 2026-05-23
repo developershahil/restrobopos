@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Mail, Lock, ArrowRight, Utensils, Star, Quote } from 'lucide-react';
+import { setSession } from '../utils/auth';
 
 const QUOTES = [
   {
@@ -37,7 +38,7 @@ export default function Login() {
 
   const handleLogin = (e) => {
     e.preventDefault();
-    localStorage.setItem('isLoggedIn', 'true');
+    setSession();
     navigate('/dashboard');
   };
 

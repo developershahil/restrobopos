@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, ChevronDown, ChevronUp, Plus, Minus, Save, X, Calendar } from 'lucide-react';
+import { ArrowLeft, ChevronDown, ChevronUp, Plus, Minus, Save, Calendar } from 'lucide-react';
 import SelectCategoriesModal from './SelectCategoriesModal';
 
 const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];

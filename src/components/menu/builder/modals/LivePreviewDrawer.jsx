@@ -3,7 +3,7 @@ import { X, Smartphone, Monitor } from 'lucide-react';
 import { useMenuStore } from '../../../../store/useMenuStore';
 
 export default function LivePreviewDrawer({ onClose }) {
-  const { items, categories, taxes } = useMenuStore();
+  const { items, categories } = useMenuStore();
   const [channel, setChannel] = useState('Swiggy');
 
   const getPrice = (item) => {

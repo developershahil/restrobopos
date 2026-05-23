@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Search, Download, Filter, ChevronDown, AlertCircle, RefreshCw, PlusCircle, Gift, ArrowRight, XOctagon, CreditCard, PackageX, UserX, AlertTriangle, Calendar, CheckCircle2 } from 'lucide-react';
+import EmptyState from '../EmptyState';
 
 const mockFailedOrders = [
   { 
@@ -229,8 +230,6 @@ export default function FailedOrdersTable() {
             </div>
           </div>
         </div>
-
-import EmptyState from '../EmptyState';
 
         {/* Table Area */}
         <div className="flex-1 overflow-auto bg-card">

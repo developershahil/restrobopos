@@ -59,7 +59,7 @@ export function CategoryModal({ initial, onSave, onClose }) {
   const [active, setActive] = useState(initial?.active ?? true);
   const [color, setColor] = useState(initial?.color || '#6366f1');
 
-  const { categoryTiming, setCategoryTiming } = useMenuStore();
+  const { categoryTiming } = useMenuStore();
   const initialTiming = initial ? categoryTiming[initial.id] : undefined;
   const [timing, setTiming] = useState(initialTiming || { alwaysAvailable: true, days: [], startTime: '', endTime: '' });
 
@@ -106,6 +106,9 @@ export function CategoryModal({ initial, onSave, onClose }) {
 // ─── Item Modal ───────────────────────────────────────────────────────────────
 const ALL_ALLERGENS = ['Gluten','Dairy','Eggs','Nuts','Soy','Seafood','Sesame'];
 const ALL_CHANNELS  = ['Swiggy', 'Zomato', 'POS', 'Mobile App'];
+const SectionLabel = ({ children }) => (
+  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider pt-1 border-t border-border/50 mb-2">{children}</p>
+);
 
 export function ItemModal({ initial, categoryId, onSave, onClose }) {
   const [name, setName]                   = useState(initial?.name || '');
@@ -134,10 +137,6 @@ export function ItemModal({ initial, categoryId, onSave, onClose }) {
     onSave({ name: name.trim(), price, type, status, description, prepTime, calories, packagingCharge, tags, itemCode, discount, minOrderQty, maxOrderQty, allergens, channels, categoryId: initial?.categoryId || categoryId });
     onClose();
   };
-
-  const SectionLabel = ({ children }) => (
-    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider pt-1 border-t border-border/50 mb-2">{children}</p>
-  );
 
   return (
     <ModalWrapper title={initial ? 'Edit Item' : 'Add Item'} onClose={onClose} maxWidth="max-w-md"

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useMenuStore } from '../../../store/useMenuStore';
-import { Send, Clock, Calendar, CheckCircle2, XCircle, FileText, ChevronRight, Check } from 'lucide-react';
+import { Send, Clock, Calendar, CheckCircle2, FileText, Check } from 'lucide-react';
 
 const PLATFORMS = [
   { id: 'Swiggy', name: 'Swiggy', color: 'bg-orange-500' },

@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { Search, Calculator, AlertTriangle, TrendingDown, TrendingUp } from 'lucide-react';
+import { Search, TrendingDown, TrendingUp } from 'lucide-react';
 import { useMenuStore } from '../../../store/useMenuStore';
 import { useInventoryStore } from '../../../store/useInventoryStore';
 
 export default function RecipeCostTab() {
-  const { items, categories, variants, addonItems } = useMenuStore();
+  const { items, categories } = useMenuStore();
   const { ingredients } = useInventoryStore();
   const [searchQuery, setSearchQuery] = useState('');
 

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { ArrowDownToLine, ArrowUpFromLine, AlertTriangle, X, Plus, Trash2, Zap } from 'lucide-react';
 import { useInventoryStore } from '../../../store/useInventoryStore';
 

@@ -55,6 +55,7 @@ export default function PastOrdersTable() {
   // Auto-adjust page if current page becomes empty due to filtering
   useEffect(() => {
     if (currentPage > totalPages && totalPages > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentPage(totalPages);
     } else if (totalPages === 0 && currentPage !== 1) {
       setCurrentPage(1);

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MapPin, Store, Tag, Filter, Eye, Search, ChevronDown } from 'lucide-react';
+import { MapPin, Store, Tag, Filter, Eye, Search } from 'lucide-react';
 
 const MOCK_OUTLETS = [
   { id: 1, name: 'Koramangala Branch', area: 'Koramangala, Bangalore', status: 'active' },

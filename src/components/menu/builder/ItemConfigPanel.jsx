@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Image as ImageIcon, Upload, Sparkles } from 'lucide-react';
+import { Image as ImageIcon, Sparkles } from 'lucide-react';
 import { useMenuStore } from '../../../store/useMenuStore';
 import VariantManager from './VariantManager';
 import AddonManager from './AddonManager';
@@ -22,6 +22,8 @@ const VegDot = ({ type }) => {
   const color = type === 'Veg' ? 'bg-green-500' : type === 'Non-Veg' ? 'bg-red-500' : 'bg-yellow-400';
   return <span className={`w-2 h-2 rounded-full shrink-0 ${color}`} />;
 };
+
+const SL = ({ children }) => <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 mt-4 first:mt-0">{children}</p>;
 
 function DetailsTab({ item }) {
   const { updateItem, taxes } = useMenuStore();
@@ -49,8 +51,6 @@ function DetailsTab({ item }) {
     description: desc, prepTime: prep, calories: cal, packagingCharge: pkg, discount, itemCode, minOrderQty: minQty, maxOrderQty: maxQty,
     imageUrl, swiggyMarkup, zomatoMarkup
   });
-
-  const SL = ({ children }) => <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 mt-4 first:mt-0">{children}</p>;
 
 
   return (

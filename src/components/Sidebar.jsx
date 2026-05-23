@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { 
-  Home, Users, ShoppingBag, Menu, Package, Store, 
+  Users, ShoppingBag, Menu, Package, Store, 
   Settings, ChevronLeft, ChevronRight, BarChart3, 
-  Tag, ToggleLeft, Globe, LogOut, User as UserIcon, Building, HelpCircle, ChevronUp, LayoutDashboard, Server, Bell, X, Moon, Sun, Search
+  Tag, ToggleLeft, Globe, LogOut, User as UserIcon, Building, HelpCircle, ChevronUp, LayoutDashboard, Bell, X, Moon, Sun, Search
 } from 'lucide-react';
 import GlobalSearchModal from './GlobalSearchModal';
 
@@ -48,7 +48,6 @@ export default function Sidebar({ onOpenSwitchModal, activeBrand, isMobileOpen, 
     return document.documentElement.classList.contains('dark') || 
            localStorage.getItem('theme') === 'dark';
   });
-  const location = useLocation();
   const navigate = useNavigate();
   const menuRef = useRef(null);
 

@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown, EyeOff, Activity, ArrowRight } from 'lucide-react';
+import { TrendingUp, TrendingDown, EyeOff, ArrowRight } from 'lucide-react';
 
 const mockInsights = {
   top: [

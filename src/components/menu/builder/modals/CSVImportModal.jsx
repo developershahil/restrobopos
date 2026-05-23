@@ -56,7 +56,7 @@ function downloadTemplate() {
 // ─── Validate a parsed row ────────────────────────────────────────────────────
 const VALID_TYPES = ['Veg', 'Non-Veg', 'Egg', 'Vegan'];
 
-function validateRow(row, idx) {
+function validateRow(row) {
   const errors = [];
   const [category, name, price, type] = row;
   if (!category) errors.push('Category is required');
@@ -68,7 +68,7 @@ function validateRow(row, idx) {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function CSVImportModal({ onClose }) {
-  const { categories, addCategory, addItem, items } = useMenuStore();
+  const { categories, addCategory, addItem } = useMenuStore();
 
   const [dragging, setDragging] = useState(false);
   const [rows, setRows]         = useState(null); // parsed data rows (excluding header)
@@ -110,7 +110,7 @@ export default function CSVImportModal({ onClose }) {
     categories.forEach(c => { catMap[c.name.toLowerCase()] = c.id; });
 
     rows.forEach((row) => {
-      const errors = validateRow(row, 0);
+      const errors = validateRow(row);
       if (errors.length) return; // skip invalid
 
       const [

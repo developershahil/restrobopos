@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Search, Phone, Mail, MessageCircle, Clock, ShoppingBag, ChevronDown, ChevronUp, Package, CheckCircle, XCircle, Truck, IndianRupee, MapPin, CreditCard, Store, StickyNote, User, Calendar, Hash } from 'lucide-react';
+import { Search, Phone, Mail, MessageCircle, Clock, ShoppingBag, ChevronDown, ChevronUp, CheckCircle, XCircle, Truck, MapPin, CreditCard, Store, StickyNote, User, Calendar } from 'lucide-react';
 
 const CUSTOMER_ORDERS = {
   1: [
@@ -81,8 +81,18 @@ const CHANNEL_COLOR = {
 export default function CustomerCRM() {
   const [selectedCustomer, setSelectedCustomer] = useState(mockCustomers[0]);
   const [expandedOrder, setExpandedOrder] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeSegment, setActiveSegment] = useState('All');
 
   const orders = CUSTOMER_ORDERS[selectedCustomer?.id] || [];
+
+  const filteredCustomers = mockCustomers.filter(c => {
+    const matchesSearch = c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      c.phone.includes(searchQuery) ||
+      c.email.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesSegment = activeSegment === 'All' || c.segment === activeSegment;
+    return matchesSearch && matchesSegment;
+  });
 
   const toggleOrder = (orderId) => {
     setExpandedOrder(prev => prev === orderId ? null : orderId);
@@ -99,18 +109,34 @@ export default function CustomerCRM() {
             <input 
               type="text" 
               placeholder="Search customers..." 
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
               className="w-full pl-9 pr-4 py-2 bg-card border border-border rounded-md text-sm outline-none focus:border-primary"
             />
           </div>
           <div className="flex gap-2 mt-4 overflow-x-auto pb-2">
-            <button className="px-3 py-1 bg-primary/10 text-primary text-xs font-semibold rounded-full shrink-0">All</button>
-            <button className="px-3 py-1 bg-card border border-border text-xs font-medium rounded-full shrink-0 hover:bg-muted">VIP</button>
-            <button className="px-3 py-1 bg-card border border-border text-xs font-medium rounded-full shrink-0 hover:bg-muted">New</button>
-            <button className="px-3 py-1 bg-card border border-border text-xs font-medium rounded-full shrink-0 hover:bg-muted">At Risk</button>
+            {['All', 'VIP', 'Repeat', 'New', 'At Risk'].map(seg => (
+              <button
+                key={seg}
+                onClick={() => setActiveSegment(seg)}
+                className={`px-3 py-1 text-xs font-semibold rounded-full shrink-0 transition-colors ${
+                  activeSegment === seg
+                    ? 'bg-primary/10 text-primary'
+                    : 'bg-card border border-border text-foreground hover:bg-muted'
+                }`}
+              >
+                {seg}
+              </button>
+            ))}
           </div>
         </div>
         <div className="flex-1 overflow-y-auto p-2 space-y-1">
-          {mockCustomers.map(customer => (
+          {filteredCustomers.length === 0 && (
+            <div className="p-4 text-center text-sm text-muted-foreground">
+              No customers match your search.
+            </div>
+          )}
+          {filteredCustomers.map(customer => (
             <div 
               key={customer.id} 
               onClick={() => { setSelectedCustomer(customer); setExpandedOrder(null); }}
@@ -144,7 +170,7 @@ export default function CustomerCRM() {
                   ← Back to Directory
                 </button>
                 <h2 className="text-xl md:text-2xl font-bold">{selectedCustomer.name}</h2>
-                <p className="text-muted-foreground mt-1">{selectedCustomer.phone} • Customer since 2024</p>
+                <p className="text-muted-foreground mt-1">{selectedCustomer.phone} • Customer since {new Date(selectedCustomer.joinDate).getFullYear()}</p>
                 <div className="flex gap-2 mt-3">
                   <span className="px-2 py-1 bg-primary/10 text-primary text-xs font-bold rounded uppercase">{selectedCustomer.segment}</span>
                   {selectedCustomer.segment === 'VIP' && (
@@ -242,7 +268,6 @@ export default function CustomerCRM() {
             <div className="space-y-3">
               {orders.map((order, idx) => {
                 const statusConf = STATUS_CONFIG[order.status] || STATUS_CONFIG.Delivered;
-                const StatusIcon = statusConf.icon;
                 const isExpanded = expandedOrder === order.id;
                 const channelColor = CHANNEL_COLOR[order.channel] || 'bg-gray-50 text-gray-600';
                 const orderNumber = orders.length - idx;
