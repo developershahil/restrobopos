@@ -32,7 +32,7 @@ const Toggle = ({ enabled, onClick, label }) => (
       onClick={onClick}
       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${enabled ? 'bg-primary' : 'bg-muted'}`}
     >
-      <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${enabled ? 'translate-x-6' : 'translate-x-1'}`} />
+      <span className={`inline-block h-4 w-4 transform rounded-full bg-card transition-transform ${enabled ? 'translate-x-6' : 'translate-x-1'}`} />
     </button>
   </div>
 );
@@ -260,7 +260,7 @@ export default function GlobalSettings() {
         </div>
 
         {/* Content Area */}
-        <div className="flex-1 overflow-y-auto bg-muted/5 relative">
+        <div className="flex-1 overflow-y-auto bg-background relative">
           <div className="max-w-4xl mx-auto p-4 md:p-10 space-y-6 pb-32">
             
             {/* App Settings */}
@@ -451,7 +451,7 @@ export default function GlobalSettings() {
                       onClick={() => updateSubSetting('brand', 'social', 'enabled', !settings.brand.social.enabled)}
                       className={`relative inline-flex h-5 w-10 items-center rounded-full transition-colors ${settings.brand.social.enabled ? 'bg-primary' : 'bg-muted'}`}
                     >
-                      <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${settings.brand.social.enabled ? 'translate-x-5' : 'translate-x-1.5'}`} />
+                      <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-card transition-transform ${settings.brand.social.enabled ? 'translate-x-5' : 'translate-x-1.5'}`} />
                     </button>
                   </div>
                   {settings.brand.social.enabled && (
@@ -771,7 +771,7 @@ export default function GlobalSettings() {
                               }}
                               className={`relative inline-flex h-5 w-10 items-center rounded-full transition-colors ${mode.status ? 'bg-green-500' : 'bg-muted'}`}
                             >
-                              <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform ${mode.status ? 'translate-x-5' : 'translate-x-1.5'}`} />
+                              <span className={`inline-block h-3.5 w-3.5 transform rounded-full bg-card transition-transform ${mode.status ? 'translate-x-5' : 'translate-x-1.5'}`} />
                             </button>
                           </td>
                           <td className="px-3 py-2 text-right">

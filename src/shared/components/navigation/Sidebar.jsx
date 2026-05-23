@@ -3,7 +3,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { 
   Users, ShoppingBag, Menu, Package, Store, 
   Settings, ChevronLeft, ChevronRight, BarChart3, 
-  Tag, ToggleLeft, Globe, LogOut, User as UserIcon, Building, HelpCircle, ChevronUp, LayoutDashboard, Bell, X, Moon, Sun, Search
+  Tag, ToggleLeft, Globe, LogOut, User as UserIcon, Building, HelpCircle, ChevronUp, LayoutDashboard, Bell, X, Moon, Sun, Search, Bike
 } from 'lucide-react';
 import GlobalSearchModal from '../modals/GlobalSearchModal';
 
@@ -21,6 +21,7 @@ const NAV_GROUPS = [
       { name: 'Orders', href: '/orders', icon: ShoppingBag },
       { name: 'Customers', href: '/customers', icon: Users },
       { name: 'Stores', href: '/stores', icon: Store },
+      { name: 'Riders', href: '/riders', icon: Bike },
       { name: 'Notifications', href: '/notifications', icon: Bell },
     ]
   },
@@ -40,7 +41,7 @@ const SETTINGS_NAV = [
   { name: 'Global Settings', href: '/global-settings', icon: Globe },
 ];
 
-export default function Sidebar({ onOpenSwitchModal, activeBrand, isMobileOpen, onMobileClose }) {
+export default function Sidebar({ activeBrand, isMobileOpen, onMobileClose }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -190,12 +191,6 @@ export default function Sidebar({ onOpenSwitchModal, activeBrand, isMobileOpen, 
                 className="w-full flex items-center gap-3 px-3 py-1.5 text-[13px] font-medium rounded-md hover:bg-muted text-foreground transition-colors text-left"
               >
                 <UserIcon className="w-4 h-4 text-muted-foreground" /> My Profile
-              </button>
-              <button 
-                onClick={() => { setIsProfileMenuOpen(false); onOpenSwitchModal(); }}
-                className="w-full flex items-center gap-3 px-3 py-1.5 text-[13px] font-medium rounded-md hover:bg-muted text-foreground transition-colors text-left"
-              >
-                <Building className="w-4 h-4 text-muted-foreground" /> Switch Restaurant
               </button>
               <button className="w-full flex items-center gap-3 px-3 py-1.5 text-[13px] font-medium rounded-md hover:bg-muted text-foreground transition-colors text-left">
                 <HelpCircle className="w-4 h-4 text-muted-foreground" /> Help & Support

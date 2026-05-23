@@ -1,24 +1,26 @@
-import { useState } from 'react';
 import { Bike, Package, Utensils, Maximize, Minimize, Save, X, Settings as SettingsIcon, Menu as MenuIcon } from 'lucide-react';
+import { useOutletSettingsStore } from '../../store/useOutletSettingsStore';
+import { useOutletStore } from '../../store/useOutletStore';
 
 export default function Topbar({ 
   activeBrand, 
-  onOpenSwitchModal, 
+  activeOutlet,
   isFullscreen, 
   onToggleFullscreen,
   isDirty,
   onSave,
   onDiscard,
-  isSettingsOpen,
-  onToggleSettings,
-  settingsRef,
-  SettingsDropdown,
   onOpenMobileSidebar
 }) {
-  const [masterSwitch, setMasterSwitch] = useState(true);
-  const [deliverySwitch, setDeliverySwitch] = useState(true);
-  const [takeawaySwitch, setTakeawaySwitch] = useState(true);
-  const [dineInSwitch, setDineInSwitch] = useState(true);
+  const settings = useOutletSettingsStore(state => state.settings[activeOutlet.id]) || {
+    master: true, delivery: true, takeaway: true, dineIn: true
+  };
+  const toggleSetting = useOutletSettingsStore(state => state.toggleSetting);
+  
+  const outlets = useOutletStore(state => state.outlets);
+  const setActiveOutlet = useOutletStore(state => state.setActiveOutlet);
+
+  const { master: masterSwitch, delivery: deliverySwitch, takeaway: takeawaySwitch, dineIn: dineInSwitch } = settings;
 
   return (
     <header className="h-14 bg-card border-b border-border flex items-center justify-between px-4 shrink-0 shadow-sm z-40 transition-all duration-300">
@@ -31,20 +33,14 @@ export default function Topbar({
           <MenuIcon className="w-4 h-4" />
         </button>
 
-        {/* Current Brand Context */}
-        <div className="flex items-center gap-2 px-2.5 py-1.5 bg-primary/10 border border-primary/20 rounded-md shrink-0 transition-all duration-300 cursor-pointer hover:bg-primary/20" onClick={onOpenSwitchModal}>
-          <div className={`w-4 h-4 rounded ${activeBrand.color} flex items-center justify-center text-white font-black text-[10px] shadow-sm transition-colors duration-300`}>
-            {activeBrand.initials}
-          </div>
-          <span className="font-black text-sm text-primary hidden lg:block tracking-tight transition-all">{activeBrand.name}</span>
-        </div>
-
-        <span className="text-muted-foreground/40 font-light hidden sm:block">/</span>
-
-        <select className="bg-background border border-border rounded-md px-3 py-1.5 text-sm font-bold outline-none focus:border-primary shrink-0 max-w-[140px] sm:max-w-[200px] truncate">
-          <option>📍 All Outlets</option>
-          <option>📍 Koramangala Branch</option>
-          <option>📍 Indiranagar Branch</option>
+        <select 
+          className="bg-background border border-border rounded-md px-3 py-1.5 text-sm font-bold outline-none focus:border-primary shrink-0 max-w-[140px] sm:max-w-[200px] truncate cursor-pointer hover:bg-muted transition-colors"
+          value={activeOutlet.id}
+          onChange={(e) => setActiveOutlet(e.target.value)}
+        >
+          {outlets.map(outlet => (
+            <option key={outlet.id} value={outlet.id}>📍 {outlet.name}</option>
+          ))}
         </select>
 
         <div className="w-px h-6 bg-border hidden sm:block"></div>
@@ -52,7 +48,7 @@ export default function Topbar({
         <div className="items-center gap-2 hidden sm:flex">
           <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Store Status</span>
           <button 
-            onClick={() => setMasterSwitch(!masterSwitch)}
+            onClick={() => toggleSetting(activeOutlet.id, 'master')}
             className={`w-12 h-6 rounded-full transition-colors relative flex items-center ${masterSwitch ? 'bg-green-500' : 'bg-red-500'}`}
           >
             <div className={`w-4 h-4 bg-white rounded-full absolute transition-all shadow-sm ${masterSwitch ? 'left-7' : 'left-1'}`} />
@@ -70,7 +66,7 @@ export default function Topbar({
           <div className="flex items-center gap-2" title="Toggle Delivery Orders">
             <Bike className="w-3.5 h-3.5 text-blue-600" />
             <button 
-              onClick={() => setDeliverySwitch(!deliverySwitch)}
+              onClick={() => toggleSetting(activeOutlet.id, 'delivery')}
               className={`w-8 h-4 rounded-full transition-colors relative flex items-center ${deliverySwitch ? 'bg-blue-500' : 'bg-muted-foreground/30'}`}
             >
               <div className={`w-3 h-3 bg-white rounded-full absolute transition-all shadow-sm ${deliverySwitch ? 'left-4.5' : 'left-0.5'}`} />
@@ -83,7 +79,7 @@ export default function Topbar({
           <div className="flex items-center gap-2" title="Toggle Takeaway Orders">
             <Package className="w-3.5 h-3.5 text-orange-500" />
             <button 
-              onClick={() => setTakeawaySwitch(!takeawaySwitch)}
+              onClick={() => toggleSetting(activeOutlet.id, 'takeaway')}
               className={`w-8 h-4 rounded-full transition-colors relative flex items-center ${takeawaySwitch ? 'bg-orange-500' : 'bg-muted-foreground/30'}`}
             >
               <div className={`w-3 h-3 bg-white rounded-full absolute transition-all shadow-sm ${takeawaySwitch ? 'left-4.5' : 'left-0.5'}`} />
@@ -96,7 +92,7 @@ export default function Topbar({
           <div className="flex items-center gap-2" title="Toggle Dine-in Orders">
             <Utensils className="w-3.5 h-3.5 text-green-600" />
             <button 
-              onClick={() => setDineInSwitch(!dineInSwitch)}
+              onClick={() => toggleSetting(activeOutlet.id, 'dineIn')}
               className={`w-8 h-4 rounded-full transition-colors relative flex items-center ${dineInSwitch ? 'bg-green-500' : 'bg-muted-foreground/30'}`}
             >
               <div className={`w-3 h-3 bg-white rounded-full absolute transition-all shadow-sm ${dineInSwitch ? 'left-4.5' : 'left-0.5'}`} />
@@ -106,17 +102,7 @@ export default function Topbar({
 
         <div className="w-px h-6 bg-border hidden sm:block"></div>
 
-        {/* Global UI Settings */}
-        <div className="relative" ref={settingsRef}>
-          <button 
-            onClick={onToggleSettings}
-            className={`p-1.5 rounded-lg transition-all ${isSettingsOpen ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-muted-foreground'}`}
-            title="UI Settings"
-          >
-            <SettingsIcon className="w-4 h-4" />
-          </button>
-          {isSettingsOpen && <SettingsDropdown />}
-        </div>
+
 
         <button 
           onClick={onToggleFullscreen}

@@ -5,13 +5,11 @@ import CategoryList from './CategoryList';
 import ItemList from './ItemList';
 import ItemConfigPanel from './ItemConfigPanel';
 import CSVImportModal from './modals/CSVImportModal';
-import LivePreviewDrawer from './modals/LivePreviewDrawer';
 import BulkEditGrid from './BulkEditGrid';
 
 export default function MenuBuilderTab() {
   const { 
     menus, selectedMenuId, setSelectedMenuId, items, categories, 
-    showPreviewDrawer, setShowPreviewDrawer,
     hasUnsyncedChanges, setHasUnsyncedChanges,
     variants, variantGroups, globalVariants, addonGroups, addonItems, itemAddonLinks, itemVariantLinks
   } = useMenuStore();
@@ -109,12 +107,7 @@ export default function MenuBuilderTab() {
           >
             <Edit3 className="w-3.5 h-3.5" /> <span className="hidden sm:inline">Bulk Edit</span>
           </button>
-          <button
-            onClick={() => setShowPreviewDrawer(true)}
-            className="items-center gap-1.5 px-2 md:px-3 py-1.5 md:py-2 border border-border rounded-md text-xs md:text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors hidden sm:flex"
-          >
-            <Eye className="w-3.5 h-3.5" /> <span className="hidden md:inline">Live Preview</span>
-          </button>
+
           <button
             onClick={handleExportCSV}
             className="items-center gap-1.5 px-2 md:px-3 py-1.5 md:py-2 border border-border rounded-md text-xs md:text-sm font-semibold text-muted-foreground hover:text-foreground hover:bg-muted transition-colors hidden lg:flex"
@@ -187,7 +180,6 @@ export default function MenuBuilderTab() {
       </div>
 
       {showImport && <CSVImportModal onClose={() => setShowImport(false)} />}
-      {showPreviewDrawer && <LivePreviewDrawer onClose={() => setShowPreviewDrawer(false)} />}
     </div>
   );
 }

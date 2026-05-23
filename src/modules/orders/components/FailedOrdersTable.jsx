@@ -109,33 +109,33 @@ export default function FailedOrdersTable() {
         {/* Trend Analysis Header */}
         <div className="p-4 md:p-4 bg-card border-b border-border shrink-0">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div className="p-4 rounded-md border border-red-100 bg-red-50/50 flex items-center justify-between">
+            <div className="p-3 rounded-md border border-red-100 bg-red-50/50 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-red-600 uppercase tracking-wider mb-1">Failure Rate</p>
-                <h3 className="text-xl font-bold text-red-700">4.2% <span className="text-sm font-medium text-red-600/70 ml-1">of total</span></h3>
+                <h3 className="text-lg font-bold text-red-700">4.2% <span className="text-sm font-medium text-red-600/70 ml-1">of total</span></h3>
               </div>
-              <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-600">
-                <AlertCircle className="w-6 h-6" />
+              <div className="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center text-red-600">
+                <AlertCircle className="w-5 h-5" />
               </div>
             </div>
             
-            <div className="p-4 rounded-md border border-orange-100 bg-orange-50/50 flex items-center justify-between">
+            <div className="p-3 rounded-md border border-orange-100 bg-orange-50/50 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-orange-600 uppercase tracking-wider mb-1">Top Bottleneck</p>
-                <h3 className="text-lg font-black text-orange-700 leading-tight">Payment Gateway<br/><span className="text-sm font-medium">32% of failures</span></h3>
+                <h3 className="text-base font-black text-orange-700 leading-tight">Payment Gateway<br/><span className="text-xs font-medium">32% of failures</span></h3>
               </div>
-              <div className="w-12 h-12 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
-                <CreditCard className="w-6 h-6" />
+              <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
+                <CreditCard className="w-5 h-5" />
               </div>
             </div>
 
-            <div className="p-4 rounded-md border border-blue-100 bg-blue-50/50 flex items-center justify-between">
+            <div className="p-3 rounded-md border border-blue-100 bg-blue-50/50 flex items-center justify-between">
               <div>
                 <p className="text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">Lost Revenue</p>
-                <h3 className="text-xl font-bold text-blue-700">$311.50 <span className="text-sm font-medium text-blue-600/70 ml-1">Today</span></h3>
+                <h3 className="text-lg font-bold text-blue-700">$311.50 <span className="text-sm font-medium text-blue-600/70 ml-1">Today</span></h3>
               </div>
-              <div className="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
-                <ArrowRight className="w-6 h-6" />
+              <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600">
+                <ArrowRight className="w-5 h-5" />
               </div>
             </div>
           </div>
@@ -277,7 +277,7 @@ export default function FailedOrdersTable() {
                     </td>
                     <td className="px-3 py-2 text-right">
                       <div className="flex flex-col gap-1 items-end">
-                        <span className="font-black text-red-600 text-base">-${order.financials.lostRevenue.toFixed(2)}</span>
+                        <span className="font-black text-red-600 text-sm">-${order.financials.lostRevenue.toFixed(2)}</span>
                         {order.financials.refundAmount > 0 && (
                           <span className="text-xs font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded border border-green-200">
                             Refunded: ${order.financials.refundAmount.toFixed(2)}
@@ -306,7 +306,7 @@ export default function FailedOrdersTable() {
           <div className="flex items-center justify-between p-4 border-b border-border shrink-0 bg-red-50/30">
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <h2 className="text-xl font-bold">{selectedOrder.id}</h2>
+                <h2 className="text-lg font-bold">{selectedOrder.id}</h2>
                 <span className={`text-xs px-2.5 py-1 rounded-md uppercase tracking-wider font-bold bg-red-100 text-red-700`}>
                   Failed
                 </span>
@@ -319,7 +319,7 @@ export default function FailedOrdersTable() {
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-6">
+          <div className="flex-1 overflow-y-auto p-4 space-y-4">
             
             {/* Action Center: Recovery Tools */}
             <div className="bg-gradient-to-br from-primary/10 to-primary/5 rounded-md border border-primary/20 p-5">
@@ -345,15 +345,15 @@ export default function FailedOrdersTable() {
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-muted/30 p-4 rounded-md border border-border">
-                  <p className="text-xs font-bold text-muted-foreground uppercase mb-1">Root Cause</p>
-                  <p className="font-bold text-foreground flex items-center gap-1.5"><AlertTriangle className="w-4 h-4 text-red-500"/> {selectedOrder.reason}</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1">Root Cause</p>
+                  <p className="font-bold text-sm text-foreground flex items-center gap-1.5"><AlertTriangle className="w-4 h-4 text-red-500"/> {selectedOrder.reason}</p>
                 </div>
-                <div className="bg-muted/30 p-4 rounded-md border border-border">
-                  <p className="text-xs font-bold text-muted-foreground uppercase mb-1">Stage of Failure</p>
-                  <p className="font-bold text-foreground">{selectedOrder.stage}</p>
+                <div className="bg-muted/30 p-3 rounded-md border border-border">
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1">Stage of Failure</p>
+                  <p className="font-bold text-sm text-foreground">{selectedOrder.stage}</p>
                 </div>
-                <div className="bg-muted/30 p-4 rounded-md border border-border col-span-2">
-                  <p className="text-xs font-bold text-muted-foreground uppercase mb-1 flex items-center gap-1"><CreditCard className="w-3.5 h-3.5" /> Payment Details</p>
+                <div className="bg-muted/30 p-3 rounded-md border border-border col-span-2">
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase mb-1 flex items-center gap-1"><CreditCard className="w-3.5 h-3.5" /> Payment Details</p>
                   <div className="flex justify-between items-center mt-2">
                     <span className="font-medium text-sm">{selectedOrder.payment.method} ({selectedOrder.payment.txId})</span>
                     <span className="text-xs font-bold px-2 py-1 bg-background border border-border rounded">{selectedOrder.payment.status}</span>
@@ -367,8 +367,8 @@ export default function FailedOrdersTable() {
 
             {/* Cart Snapshot */}
             <div className="bg-background rounded-md border border-border overflow-hidden">
-              <div className="p-4 border-b border-border font-bold text-sm">Cart Snapshot</div>
-              <div className="p-4 space-y-3">
+              <div className="p-3 border-b border-border font-bold text-sm">Cart Snapshot</div>
+              <div className="p-3 space-y-2">
                 {selectedOrder.cart.map((item, idx) => (
                   <div key={idx} className="flex justify-between items-center text-sm">
                     <span className="font-medium">{item.qty}x {item.item}</span>
@@ -377,7 +377,7 @@ export default function FailedOrdersTable() {
                 ))}
                 <div className="pt-3 border-t border-border flex justify-between items-center">
                   <span className="font-bold">Total Lost Revenue</span>
-                  <span className="font-black text-red-600 text-lg">${selectedOrder.financials.lostRevenue.toFixed(2)}</span>
+                  <span className="font-black text-red-600 text-base">${selectedOrder.financials.lostRevenue.toFixed(2)}</span>
                 </div>
               </div>
             </div>

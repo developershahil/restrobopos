@@ -6,60 +6,22 @@ import {
 } from 'lucide-react';
 import Sidebar from '@shared/components/navigation/Sidebar';
 import Topbar from '@shared/components/navigation/Topbar';
-import SwitchRestaurantModal from '@modules/stores/components/SwitchRestaurantModal';
+import { useOutletStore } from '@shared/store/useOutletStore';
+import { useBrandStore } from '@shared/store/useBrandStore';
 
-import { MOCK_BRANDS } from '@modules/stores/data/brands.mock';
 
-const SettingsDropdown = ({ theme, setTheme }) => (
-  <div className="absolute right-0 top-full mt-2 w-64 bg-card border border-border rounded-xl shadow-2xl z-[100] overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
-    <div className="p-4 border-b border-border bg-muted/30">
-      <div className="flex items-center gap-2">
-        <Palette className="w-4 h-4 text-primary" />
-        <span className="font-semibold text-[13px] text-foreground">UI Settings</span>
-      </div>
-    </div>
-    <div className="p-4 space-y-4">
-      <div className="space-y-3">
-        <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Theme Mode</label>
-        <div className="grid grid-cols-3 gap-2">
-          {[
-            { id: 'light', icon: Sun, label: 'Light' },
-            { id: 'dark', icon: Moon, label: 'Dark' },
-            { id: 'system', icon: Monitor, label: 'System' },
-          ].map((t) => (
-            <button
-              key={t.id}
-              onClick={() => { setTheme(t.id); }}
-              className={`flex flex-col items-center gap-1.5 p-2 rounded-lg border-2 transition-all ${
-                theme === t.id 
-                  ? 'border-primary bg-primary/5 text-primary' 
-                  : 'border-border bg-muted/5 text-muted-foreground hover:bg-muted'
-              }`}
-            >
-              <t.icon size={16} />
-              <span className="text-[10px] font-bold">{t.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-    <div className="p-2 border-t border-border bg-muted/10 text-center">
-      <p className="text-[10px] font-medium text-muted-foreground">Restrobopos v2.4.0</p>
-    </div>
-  </div>
-);
 
 export default function DashboardLayout() {
   const location = useLocation();
-  const [activeBrand, setActiveBrand] = useState(MOCK_BRANDS[0]);
-  const [isSwitchModalOpen, setIsSwitchModalOpen] = useState(false);
+  const activeBrand = useBrandStore(state => state.activeBrand);
+  const activeOutlet = useOutletStore(state => state.activeOutlet);
+  const setActiveOutlet = useOutletStore(state => state.setActiveOutlet);
+  const outlets = useOutletStore(state => state.outlets);
+  
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const [theme, setTheme] = useState('light'); // 'light' | 'dark' | 'system'
   const [isDirty, setIsDirty] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [discardKey, setDiscardKey] = useState(0);
-  const settingsRef = useRef(null);
 
   // Close mobile sidebar on route change
   useEffect(() => {
@@ -76,26 +38,9 @@ export default function DashboardLayout() {
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
   }, []);
 
-  // Theme Application Logic
-  useEffect(() => {
-    const root = window.document.documentElement;
-    if (theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      root.classList.add('dark');
-    } else {
-      root.classList.remove('dark');
-    }
-  }, [theme]);
 
-  // Click outside to close settings
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (settingsRef.current && !settingsRef.current.contains(event.target)) {
-        setIsSettingsOpen(false);
-      }
-    }
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+
+
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -126,7 +71,6 @@ export default function DashboardLayout() {
   return (
     <div className={`flex h-screen overflow-hidden bg-background text-foreground`}>
       <Sidebar 
-        onOpenSwitchModal={() => setIsSwitchModalOpen(true)} 
         activeBrand={activeBrand}
         isMobileOpen={isMobileSidebarOpen}
         onMobileClose={() => setIsMobileSidebarOpen(false)}
@@ -134,17 +78,13 @@ export default function DashboardLayout() {
       <div className="flex flex-col flex-1 overflow-hidden relative">
         {isDashboard ? (
           <Topbar 
-            activeBrand={activeBrand} 
-            onOpenSwitchModal={() => setIsSwitchModalOpen(true)} 
+            activeBrand={activeBrand}
+            activeOutlet={activeOutlet}
             isFullscreen={isFullscreen}
             onToggleFullscreen={toggleFullscreen}
             isDirty={isDirty}
             onSave={handleSave}
             onDiscard={handleDiscard}
-            isSettingsOpen={isSettingsOpen}
-            onToggleSettings={() => setIsSettingsOpen(!isSettingsOpen)}
-            settingsRef={settingsRef}
-            SettingsDropdown={() => <SettingsDropdown theme={theme} setTheme={setTheme} />}
             onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
           />
         ) : (
@@ -165,16 +105,6 @@ export default function DashboardLayout() {
             <div className="flex items-center gap-2 md:gap-4">
 
 
-              <div className="relative" ref={settingsRef}>
-                <button 
-                  onClick={() => setIsSettingsOpen(!isSettingsOpen)}
-                  className={`p-1.5 rounded-lg transition-all ${isSettingsOpen ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-muted-foreground'}`}
-                >
-                  <SettingsIcon className="w-4 h-4" />
-                </button>
-                {isSettingsOpen && <SettingsDropdown theme={theme} setTheme={setTheme} />}
-              </div>
-
               <button 
                 onClick={toggleFullscreen}
                 className="p-1.5 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-all hidden sm:block"
@@ -185,17 +115,9 @@ export default function DashboardLayout() {
           </header>
         )}
         <main className="flex-1 overflow-y-auto">
-          <Outlet context={{ theme, setTheme, isDirty, setIsDirty, discardKey }} />
+          <Outlet context={{ isDirty, setIsDirty, discardKey, activeBrand, activeOutlet }} />
         </main>
       </div>
-
-      <SwitchRestaurantModal 
-        isOpen={isSwitchModalOpen} 
-        onClose={() => setIsSwitchModalOpen(false)} 
-        brands={MOCK_BRANDS}
-        activeBrand={activeBrand}
-        onSelectBrand={setActiveBrand}
-      />
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import DashboardLayout from '@layouts/DashboardLayout';
 import ProtectedRoute from '@routes/ProtectedRoute';
 
@@ -17,6 +18,8 @@ import StoreSettings  from '@modules/settings/pages/StoreSettings';
 import GlobalSettings from '@modules/settings/pages/GlobalSettings';
 import Notifications  from '@modules/notifications/pages/Notifications';
 import Inventory      from '@modules/inventory/pages/Inventory';
+import Riders         from '@modules/riders/pages/Riders';
+import RiderDetails   from '@modules/riders/pages/RiderDetails';
 
 // 404 Page
 function NotFound() {
@@ -34,33 +37,49 @@ function NotFound() {
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        
-        <Route path="/" element={
-          <ProtectedRoute>
-            <DashboardLayout />
-          </ProtectedRoute>
-        }>
-          <Route index element={<Navigate to="/dashboard" replace />} />
-          <Route path="dashboard"       element={<Dashboard />} />
-          <Route path="customers"       element={<CustomerCRM />} />
-          <Route path="orders"          element={<Orders />} />
-          <Route path="reports"         element={<Reports />} />
-          <Route path="menu"            element={<Menu />} />
-          <Route path="offers"          element={<Offers />} />
-          <Route path="availability"    element={<ItemAvailability />} />
-          <Route path="inventory"       element={<Inventory />} />
-          <Route path="stores"          element={<Stores />} />
-          <Route path="settings"        element={<StoreSettings />} />
-          <Route path="global-settings" element={<GlobalSettings />} />
-          <Route path="notifications"   element={<Notifications />} />
-          <Route path="profile"         element={<Profile />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </Router>
+    <>
+      <Toaster 
+        position="top-right" 
+        toastOptions={{
+          duration: 3000,
+          style: {
+            borderRadius: '12px',
+            padding: '12px 16px',
+            fontSize: '13px',
+            fontWeight: '600',
+          },
+        }} 
+      />
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          
+          <Route path="/" element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }>
+            <Route index element={<Navigate to="/dashboard" replace />} />
+            <Route path="dashboard"       element={<Dashboard />} />
+            <Route path="customers"       element={<CustomerCRM />} />
+            <Route path="orders"          element={<Orders />} />
+            <Route path="reports"         element={<Reports />} />
+            <Route path="menu"            element={<Menu />} />
+            <Route path="offers"          element={<Offers />} />
+            <Route path="availability"    element={<ItemAvailability />} />
+            <Route path="inventory"       element={<Inventory />} />
+            <Route path="stores"          element={<Stores />} />
+            <Route path="settings"        element={<StoreSettings />} />
+            <Route path="global-settings" element={<GlobalSettings />} />
+            <Route path="notifications"   element={<Notifications />} />
+            <Route path="profile"         element={<Profile />} />
+            <Route path="riders"          element={<Riders />} />
+            <Route path="riders/:id"      element={<RiderDetails />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Router>
+    </>
   );
 }
 

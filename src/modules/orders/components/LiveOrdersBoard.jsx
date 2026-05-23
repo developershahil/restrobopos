@@ -90,8 +90,8 @@ export default function LiveOrdersBoard() {
       {/* Left Panel: Order List */}
       <div className={`${selectedOrder ? 'hidden md:flex' : 'flex'} w-full md:w-1/3 md:min-w-[350px] border-r border-border bg-card flex-col z-10 shadow-sm`}>
         <div className="p-4 border-b border-border shrink-0">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold">Live Orders</h2>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-lg font-bold">Live Orders</h2>
             <div className="flex gap-2">
               <button 
                 onClick={() => setFocusMode(!focusMode)}
@@ -133,16 +133,16 @@ export default function LiveOrdersBoard() {
                 <div 
                   key={order.id} 
                   onClick={() => setSelectedOrder(order)}
-                  className={`p-4 rounded-md cursor-pointer transition-all border ${isSelected ? 'bg-primary/5 border-primary/30 shadow-sm' : 'bg-card border-border hover:border-primary/20 hover:shadow-sm'}`}
+                  className={`p-3 rounded-md cursor-pointer transition-all border ${isSelected ? 'bg-primary/5 border-primary/30 shadow-sm' : 'bg-card border-border hover:border-primary/20 hover:shadow-sm'}`}
                 >
-                  <div className="flex justify-between items-start mb-2">
+                  <div className="flex justify-between items-start mb-1.5">
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-lg">{order.id}</span>
+                      <span className="font-bold text-base">{order.id}</span>
                       <span className={`text-[10px] px-2 py-0.5 rounded uppercase font-bold tracking-wider ${order.status === 'New' ? 'bg-blue-100 text-blue-700' : order.status === 'Preparing' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}`}>
                         {order.status}
                       </span>
                     </div>
-                    <div className={`text-lg font-black tabular-nums ${timerClass}`}>
+                    <div className={`text-base font-bold tabular-nums ${timerClass}`}>
                       {order.timeElapsed}m
                     </div>
                   </div>
@@ -200,7 +200,7 @@ export default function LiveOrdersBoard() {
                   ← Back to Orders
                 </button>
                 <div className="flex items-center gap-3 mb-1">
-                  <h2 className="text-3xl font-black">{selectedOrder.id}</h2>
+                  <h2 className="text-2xl font-black">{selectedOrder.id}</h2>
                   <span className={`text-xs px-3 py-1 rounded-md uppercase tracking-wider font-bold ${selectedOrder.type === 'Delivery' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
                     {selectedOrder.type}
                   </span>
@@ -213,7 +213,7 @@ export default function LiveOrdersBoard() {
               {getNextStatus(selectedOrder.status) && (
                 <button 
                   onClick={() => moveOrder(selectedOrder.id, getNextStatus(selectedOrder.status))}
-                  className="px-8 py-3 rounded-md bg-primary text-primary-foreground font-bold text-lg flex items-center gap-2 transition-transform hover:scale-[1.02] active:scale-[0.98] shadow-md shadow-primary/20"
+                  className="px-5 py-2 rounded-md bg-primary text-primary-foreground font-bold text-sm flex items-center gap-2 transition-transform hover:scale-[1.02] active:scale-[0.98] shadow-md shadow-primary/20"
                 >
                   {getActionText(selectedOrder.status)} <ArrowRight className="w-4 h-4" />
                 </button>
@@ -221,7 +221,7 @@ export default function LiveOrdersBoard() {
             </div>
 
             {/* Scrollable Content */}
-            <div className="flex-1 overflow-y-auto p-4 md:p-4 lg:px-8 space-y-5 mx-auto w-full max-w-5xl">
+            <div className="flex-1 overflow-y-auto p-3 md:p-4 lg:px-6 space-y-4 mx-auto w-full max-w-5xl">
               
               {/* Customer Info */}
               <div className="bg-card p-4 rounded-md flex items-start gap-3 border border-border shadow-sm">
@@ -326,8 +326,8 @@ export default function LiveOrdersBoard() {
                     <span>${sgst.toFixed(2)}</span>
                   </div>
                   <div className="flex justify-between items-center pt-2 mt-2 border-t border-border/50">
-                    <span className="font-bold text-foreground uppercase tracking-widest text-xs">Total Amount</span>
-                    <span className="font-black text-xl text-foreground">
+                    <span className="font-bold text-foreground uppercase tracking-widest text-[11px]">Total Amount</span>
+                    <span className="font-black text-lg text-foreground">
                       ${finalTotal.toFixed(2)}
                     </span>
                   </div>
@@ -337,15 +337,15 @@ export default function LiveOrdersBoard() {
             </div>
 
             {/* Sticky Action Buttons Footer */}
-            <div className="bg-card border-t border-border p-4 shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20">
+            <div className="bg-card border-t border-border p-3 shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-20">
               <div className="mx-auto w-full max-w-5xl grid grid-cols-2 md:grid-cols-3 gap-3">
-                <button className="flex items-center justify-center gap-2 py-2.5 rounded-md border border-border bg-background font-bold hover:bg-muted transition-colors text-sm shadow-sm">
+                <button className="flex items-center justify-center gap-2 py-2 rounded-md border border-border bg-background font-bold hover:bg-muted transition-colors text-sm shadow-sm">
                   <Printer className="w-4 h-4 text-muted-foreground" /> Print KOT
                 </button>
-                <button className="flex items-center justify-center gap-2 py-2.5 rounded-md border border-border bg-background font-bold hover:bg-muted transition-colors text-sm shadow-sm">
+                <button className="flex items-center justify-center gap-2 py-2 rounded-md border border-border bg-background font-bold hover:bg-muted transition-colors text-sm shadow-sm">
                   <Printer className="w-4 h-4 text-muted-foreground" /> Print Bill
                 </button>
-                <button className="col-span-2 md:col-span-1 flex items-center justify-center gap-2 py-2.5 rounded-md border border-red-200 bg-red-50 text-red-600 font-bold hover:bg-red-100 transition-colors text-sm shadow-sm">
+                <button className="col-span-2 md:col-span-1 flex items-center justify-center gap-2 py-2 rounded-md border border-red-200 bg-red-50 text-red-600 font-bold hover:bg-red-100 transition-colors text-sm shadow-sm">
                   <X className="w-4 h-4" /> Cancel
                 </button>
               </div>

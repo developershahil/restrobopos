@@ -72,17 +72,17 @@ export default function PastOrdersTable() {
         <div className="p-4 border-b border-border bg-card shrink-0 space-y-6">
           {/* Top Row: Insights */}
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-background border border-border p-4 rounded-md shadow-sm">
+            <div className="bg-background border border-border p-3 rounded-md shadow-sm">
               <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Total Orders</p>
-              <p className="text-3xl font-black mt-1">1,248</p>
+              <p className="text-2xl font-black mt-1">1,248</p>
             </div>
-            <div className="bg-background border border-border p-4 rounded-md shadow-sm">
+            <div className="bg-background border border-border p-3 rounded-md shadow-sm">
               <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Revenue</p>
-              <p className="text-3xl font-black mt-1">$45,210</p>
+              <p className="text-2xl font-black mt-1">$45,210</p>
             </div>
-            <div className="bg-background border border-border p-4 rounded-md shadow-sm">
+            <div className="bg-background border border-border p-3 rounded-md shadow-sm">
               <p className="text-sm font-bold text-muted-foreground uppercase tracking-wider">Avg Order Value</p>
-              <p className="text-3xl font-black mt-1">$36.22</p>
+              <p className="text-2xl font-black mt-1">$36.22</p>
             </div>
           </div>
 
@@ -162,11 +162,11 @@ export default function PastOrdersTable() {
           <table className="w-full text-left border-collapse">
             <thead className="bg-muted/50 sticky top-0 backdrop-blur-sm z-10 border-b border-border">
               <tr>
-                <th className="p-4 font-bold text-muted-foreground text-sm uppercase tracking-wider">Order</th>
-                <th className="p-4 font-bold text-muted-foreground text-sm uppercase tracking-wider">Customer</th>
-                <th className="p-4 font-bold text-muted-foreground text-sm uppercase tracking-wider">Type</th>
-                <th className="p-4 font-bold text-muted-foreground text-sm uppercase tracking-wider">Status</th>
-                <th className="p-4 font-bold text-muted-foreground text-sm uppercase tracking-wider text-right">Total</th>
+                <th className="p-3 font-bold text-muted-foreground text-sm uppercase tracking-wider">Order</th>
+                <th className="p-3 font-bold text-muted-foreground text-sm uppercase tracking-wider">Customer</th>
+                <th className="p-3 font-bold text-muted-foreground text-sm uppercase tracking-wider">Type</th>
+                <th className="p-3 font-bold text-muted-foreground text-sm uppercase tracking-wider">Status</th>
+                <th className="p-3 font-bold text-muted-foreground text-sm uppercase tracking-wider text-right">Total</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
@@ -176,29 +176,29 @@ export default function PastOrdersTable() {
                   onClick={() => setSelectedOrder(order)}
                   className={`hover:bg-muted/30 cursor-pointer transition-colors ${selectedOrder?.id === order.id ? 'bg-primary/5' : ''}`}
                 >
-                  <td className="p-4">
-                    <p className="font-bold">{order.id}</p>
-                    <p className="text-xs text-muted-foreground font-medium mt-0.5">{order.date}</p>
+                  <td className="px-3 py-2.5">
+                    <p className="font-bold text-sm">{order.id}</p>
+                    <p className="text-[11px] text-muted-foreground font-medium mt-0.5">{order.date}</p>
                   </td>
-                  <td className="p-4">
-                    <p className="font-bold">{order.customer}</p>
-                    <p className="text-xs text-muted-foreground font-medium mt-0.5">{order.phone}</p>
+                  <td className="px-3 py-2.5">
+                    <p className="font-bold text-sm">{order.customer}</p>
+                    <p className="text-[11px] text-muted-foreground font-medium mt-0.5">{order.phone}</p>
                   </td>
-                  <td className="p-4">
+                  <td className="px-3 py-2.5">
                     <span className={`text-[10px] px-2 py-0.5 rounded uppercase font-bold tracking-wider ${order.type === 'Delivery' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
                       {order.type}
                     </span>
                   </td>
-                  <td className="p-4">
+                  <td className="px-3 py-2.5">
                     <div className="flex items-center gap-1.5">
                       {order.status === 'Completed' ? <CheckCircle2 className="w-4 h-4 text-green-600" /> : <XCircle className="w-4 h-4 text-red-500" />}
                       <span className={`text-sm font-bold ${order.status === 'Completed' ? 'text-green-600' : 'text-red-500'}`}>
                         {order.status}
                       </span>
                     </div>
-                    <p className="text-xs text-muted-foreground font-medium mt-0.5">{order.payment}</p>
+                    <p className="text-[11px] text-muted-foreground font-medium mt-0.5">{order.payment}</p>
                   </td>
-                  <td className="p-4 text-right font-black text-lg">
+                  <td className="px-3 py-2.5 text-right font-black text-base">
                     {order.amount}
                   </td>
                 </tr>
@@ -243,7 +243,7 @@ export default function PastOrdersTable() {
           <div className="flex items-center justify-between p-4 border-b border-border shrink-0 bg-muted/10">
             <div>
               <div className="flex items-center gap-3 mb-1">
-                <h2 className="text-xl font-bold">{selectedOrder.id}</h2>
+                <h2 className="text-lg font-bold">{selectedOrder.id}</h2>
                 <span className={`text-xs px-2.5 py-1 rounded-md uppercase tracking-wider font-bold ${selectedOrder.type === 'Delivery' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'}`}>
                   {selectedOrder.type}
                 </span>
@@ -259,7 +259,7 @@ export default function PastOrdersTable() {
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-6">
+          <div className="flex-1 overflow-y-auto p-4 space-y-5">
             
             {/* Timeline */}
             <div>
@@ -365,29 +365,29 @@ export default function PastOrdersTable() {
                 </div>
               </div>
               <div className="p-4 bg-card border-t border-border flex justify-between items-center">
-                <span className="font-bold uppercase tracking-widest text-[13px] text-foreground">Final Total</span>
-                <span className="font-black text-2xl text-foreground">{selectedOrder.amount}</span>
+                <span className="font-bold uppercase tracking-widest text-xs text-foreground">Final Total</span>
+                <span className="font-black text-xl text-foreground">{selectedOrder.amount}</span>
               </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="grid grid-cols-2 gap-3 pb-8">
-              <button className="flex items-center justify-center gap-2 py-3 rounded-md border border-border bg-card font-bold hover:bg-muted transition-colors text-sm shadow-sm">
+            <div className="grid grid-cols-2 gap-3 pb-4">
+              <button className="flex items-center justify-center gap-2 py-2.5 rounded-md border border-border bg-card font-bold hover:bg-muted transition-colors text-sm shadow-sm">
                 <FileText className="w-4 h-4 text-muted-foreground" /> Export PDF
               </button>
-              <button className="flex items-center justify-center gap-2 py-3 rounded-md border border-border bg-card font-bold hover:bg-muted transition-colors text-sm shadow-sm">
+              <button className="flex items-center justify-center gap-2 py-2.5 rounded-md border border-border bg-card font-bold hover:bg-muted transition-colors text-sm shadow-sm">
                 <Printer className="w-4 h-4 text-muted-foreground" /> Reprint Invoice
               </button>
               
               {selectedOrder.status === 'Failed' || selectedOrder.status === 'Refunded' ? (
                 <button 
-                  className={`col-span-2 flex items-center justify-center gap-2 py-3 rounded-md font-bold transition-colors text-sm shadow-sm ${selectedOrder.status === 'Refunded' ? 'bg-muted text-muted-foreground cursor-not-allowed border border-border' : 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100'}`}
+                  className={`col-span-2 flex items-center justify-center gap-2 py-2.5 rounded-md font-bold transition-colors text-sm shadow-sm ${selectedOrder.status === 'Refunded' ? 'bg-muted text-muted-foreground cursor-not-allowed border border-border' : 'bg-red-50 text-red-600 border border-red-200 hover:bg-red-100'}`}
                   disabled={selectedOrder.status === 'Refunded'}
                 >
                   <RotateCcw className="w-4 h-4" /> {selectedOrder.status === 'Refunded' ? 'Refund Already Processed' : 'Process Refund'}
                 </button>
               ) : (
-                <button className="col-span-2 flex items-center justify-center gap-2 py-3 rounded-md bg-primary text-primary-foreground font-bold hover:bg-primary/90 transition-colors text-sm shadow-sm">
+                <button className="col-span-2 flex items-center justify-center gap-2 py-2.5 rounded-md bg-primary text-primary-foreground font-bold hover:bg-primary/90 transition-colors text-sm shadow-sm">
                   <RotateCcw className="w-4 h-4" /> Repeat Order
                 </button>
               )}
